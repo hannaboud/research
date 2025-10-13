@@ -1,0 +1,196 @@
+---
+title: "Assignment 2"
+date: "`r format(Sys.time(), '%d %B, %Y %H:%M')`"
+author: "LO7G01"
+format: 
+  html: 
+    embed-resources: true # Creates a single HTML file as output
+    code-fold: true # Code folding; allows you to show/hide code chunks
+    code-tools: true # Includes a menu to download the code file 
+    code-line-numbers: true # Line numbers in code chunks
+    df-print: paged # Sets how dataframes are automatically printed
+    table-of-contents: true # (Optional) Creates a table of contents
+    number-sections: true # (Optional) Puts numbers next to heading/subheadings
+---
+# Problem
+Body fat percentage is an important diagnostic to know as it provides and accurate health assessment, can be used to manage risks of diseases, such as cardiovascular diseases and diabetes, and can inform fitness decisions to be targeted to an individual's unique body composition. However, people usually rely on oversimplified indicators such as BMI (Body Mass Index) or expensive tests, which are not accessible to everyone, to understand their body fat percentage. Our project will thus investigate how simple, accessible body measurements such as weight, age, height and various body circumference measurements, can reliably predict body fat percentage. By building a model which can successfully predict body fat percentage, individuals will be better equipped to track their health and fitness status without the need for specialised equipment or professional testing.
+
+# EDA
+```{r, message=FALSE}
+library(tidyverse)
+library(readr)
+theme_set(theme_bw())
+```
+
+## Data Quality and Cleaning
+```{r}
+# Read in data and inspect
+bodyfat <- read_tsv("bodyfat.txt") 
+glimpse(bodyfat)
+```
+
+```{r}
+# Type cast to be integer as measured in years
+bodyfat$Age <- as.integer(bodyfat$Age)
+glimpse(bodyfat)
+```
+Need to also convert `Weight`, which is currently in pounds, to kg and `Height`, which is currently in inches, to cm.
+```{r}
+bodyfat$Weight <- bodyfat$Weight/2.205
+bodyfat$Height <- bodyfat$Height*2.54
+```
+```{r}
+glimpse(bodyfat)
+```
+### Missingness
+```{r, warning=FALSE}
+visdat::vis_miss(bodyfat, sort_miss = TRUE) + # Sort the variables in descending order of missingness
+  theme(axis.text.bodyfat = element_text(angle = 90, hjust = 0))
+```
+No missing values are inputted and as all variable types are numeric, there are no string inputs such as 'None' to represent NA values. Therefore, the data is complete.
+
+### Summary statistics
+```{r}
+library(modelsummary)
+datasummary_skim(bodyfat)
+```
+
+## Dependent Variable
+The dependent variable that our group is going to predict is body fat percentage (`Pct.BF`). So as part of the EDA process, I will first visualise the distribution of this variable.
+```{r, warning=FALSE}
+ggplot(bodyfat) +
+  aes(x = Pct.BF) +
+  geom_histogram(binwidth = 3, boundary = 0, position = "identity",
+                 alpha = 0.85, fill = "lightblue", colour = "white", size = 0.2) +
+labs(title = "Distribution of Body Fat Percentage", x = "Body Fat (%)", y = "Count") + 
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+```{r}
+# Calculate mean
+bfp_mean <- mean(bodyfat$Pct.BF)
+
+ggplot(bodyfat) +
+  aes(x = "", y = Pct.BF) +
+  geom_boxplot(alpha = 0.85, fill = "lightblue", width = 0.5) +
+  stat_summary(fun = mean, geom = "point", shape = 4, size = 6, color = "blue") +
+labs(title = "Boxplot of Body Fat Percentage", y = "Body Fat (%)", x = "") + 
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+```{r}
+ggplot(bodyfat) +
+  aes(x = Pct.BF) +
+  geom_density(fill = "lightblue", colour="white", alpha = 0.6) +
+  labs(title = "Density of Body Fat Percentage", x = "Body Fat %", y = "Density") + 
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+The investigation into the body fat percentage dependent variable (`Pct.bf`) has revealed that the distribution of this variable is approximately bell-shaped with a slight right skew, driven by a small number of individuals with unusually high body fat percentages above approximately 40%. These cases appear as outliers in the boxplot, which also explains the longer right tail in the histogram and density plots. Despite this mild skewness, the variable appears to be fairly symmetric, with a mean and median very close together. Therefore, no immediate transformation is required as the distribution is suited for modelling purposes and does not exhibit strong non-linearities.
+
+## Independent Variables
+This section investigates the relationships between body fat percentage and other variables in the dataset, focusing on those that exhibit stronger correlations or meaningful dynamics with the dependent variable.
+
+### Correlation Analysis
+```{r}
+datasummary_correlation(bodyfat)
+```
+
+```{r}
+library(ggcorrplot)
+cor_matrix <- round(cor(bodyfat, use = "complete.obs"),2)
+
+ggcorrplot(cor_matrix,
+           hc.order=TRUE,
+           type = "upper",
+           lab = TRUE,
+           lab_size = 2.5,
+           colors = c("lightblue", "white", "red"))
+
+```
+
+From the correlation analysis, the variable most strongly associated with `Pct.BF` is `Density` (-0.99), which makes sense because body fat percentage is derived directly from density using Siri's equation. Several other strong correlations exist between `Pct.BF` and `Abdomen` (0.82), `Waist` (0.82), `Chest` (0.7), `Hip` (0.63) and `Weight` (0.62). Notably, `Abdomen` and `Waist` are perfectly collinear, indicating that both cannot be included in the same predictive model without introducing multicollinearity issues. Furthermore, the only variable negatively correlated with `Pct.BF` is `Height` (-0.03).
+
+### Relationships
+```{r}
+# All predictors
+vars_to_plot <- c("Density", "Abdomen","Waist","Chest","Hip","Weight","Thigh",
+                  "Neck","Knee","Bicep","Forearm","Wrist","Age","Ankle","Height")
+
+bodyfat |>
+  select(Pct.BF, all_of(vars_to_plot)) |>
+  pivot_longer(cols = all_of(vars_to_plot),
+               names_to = "variable", values_to = "value") |>
+  drop_na() |> ggplot() +
+  aes(x = value, y = Pct.BF) +
+  geom_point(alpha = 0.5, colour = "lightblue", size = 0.9) +
+  geom_smooth(method = "lm", se = TRUE, colour = "red", linewidth = 0.7) +
+  facet_wrap(~ variable, scales = "free_x", ncol = 5) +
+  labs(x = NULL, y = "Body Fat (%)",
+       title = "Relationships between Body Fat % and Predictors") +
+  theme_classic() + 
+  theme(legend.position = "top",
+        strip.text = element_text(size = 10, face="bold"),
+        plot.title = element_text(size = 14, face="bold", hjust=0.5))
+```
+The scatterplots further confirm that body fat percentage has the strongest positive relationships with abdomen and waist size, closely followed by chest, hip and weight. Variables such as height and ankle show little association. While density also shows an almost perfect relationship, it provides negligible predictive value due its direct correlation to body fat percentage. Overall, torso-related measures seem to be the strongest predictors of body fat percentage.
+
+#### Deriving Categorical BMI variable
+
+Using the guidelines at https://www.health.gov.au/topics/overweight-and-obesity/bmi-and-waist.
+```{r}
+bodyfat <- bodyfat |> 
+  mutate(
+    BMI = Weight/((Height/100)^2),               # Weight(kg) / Height^2(m)
+    BMI_cat = case_when(
+      BMI < 18.5 ~ "Underweight",
+      BMI >= 18.5 & BMI < 25 ~ "Healthy",
+      BMI >= 25 & BMI < 30 ~ "Overweight",
+      BMI >= 30 & BMI < 35 ~ "Obese class 1",
+      BMI >= 35 & BMI < 40 ~ "Obese class 2",
+      BMI >= 40 ~ "Obese class 3"
+    ),
+    BMI_cat = factor(BMI_cat, 
+                     levels = c("Underweight", "Healthy",
+                                "Overweight",
+                                "Obese class 1", "Obese class 2", "Obese class 3"),
+                     ordered = TRUE)
+  )
+
+```
+
+```{r}
+ggplot(bodyfat, aes(x = BMI_cat, y = Pct.BF, fill = BMI_cat)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "Body Fat % across BMI Categories", 
+       x = "BMI Category", y = "Body Fat (%)") +
+  theme_classic() +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5))
+```
+
+This boxplot shows that body fat percentage rises consistently across BMI categories, confirming that higher BMI is strongly associated with higher body fat levels.
+
+# Model Selection
+
+## Data Splitting
+First, splitting the data into training and test set to allow out-of-sample performance to be assessed and ensure no overfitting.
+```{r}
+# install.packages("caTools")
+library(caTools)
+set.seed(71) # Set random seed
+
+split <- sample.split(bodyfat$Pct.BF, SplitRatio = 0.8)
+train <- subset(bodyfat, split == TRUE)
+test <- subset(bodyfat, split == FALSE)
+```
+
+```{r}
+cat("Training set size (80%):", nrow(train), "\n")
+
+cat("Test set size (20%):", nrow(test), "\n")
+```
+
