@@ -14,17 +14,78 @@ format:
 
 Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
 
-## Bullets
+```{r, message=FALSE}
+library(tidyverse)
+library(readr)
+# install.packages("modelsummary")
+library(modelsummary)
+library(ggcorrplot)
+# install.packages("caTools")
+library(caTools)
+library(car)
+# install.packages("sjPlot")
+library(sjPlot)
+library(insight)
+# install.packages("lmSubsets")
+library(lmSubsets)
+theme_set(theme_bw())
+```
 
-When you click the **Render** button a document will be generated that includes:
+## EDA
 
--   Content authored with markdown
--   Output from executable code
-
-## Code
-
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+After data cleaning:
 
 ```{r}
-1 + 1
+# Read in data and inspect
+bodyfat <- read_tsv("bodyfat.txt") 
+```
+
+```{r}
+bodyfat$Age <- as.integer(bodyfat$Age)
+bodyfat$Weight <- bodyfat$Weight/2.205
+bodyfat$Height <- bodyfat$Height*2.54
+glimpse(bodyfat)
+```
+
+```{r}
+set.seed(71) # Set random seed
+
+split <- sample.split(bodyfat$Pct.BF, SplitRatio = 0.8)
+train <- subset(bodyfat, split == TRUE)
+test <- subset(bodyfat, split == FALSE)
+```
+
+## Multiple Body Sections: Examining Correlations
+
+```{r}
+lm1 <- lm(Pct.BF ~ Abdomen + Bicep + Neck + Thigh, data = train)
+lm1
+```
+
+Generated regression statistics:
+
+```{r}
+summary(lm1)
+```
+
+## Multiple Body Sections:  Graphing of Residuals + QQ Plot
+
+```{r}
+# install.packages("patchwork")
+library(patchwork)
+library(broom)
+
+aug <- augment(lm1)
+
+p1 <- ggplot(aug, aes(.fitted, .std.resid)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, color = "blue") +
+  labs(x = "Fitted", y = "Std. Residual")
+
+p2 <- ggplot(aug, aes(sample = .std.resid)) +
+  stat_qq() +
+  stat_qq_line()
+
+# Combine plots side by side
+p1 + p2
 ```

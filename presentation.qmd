@@ -359,23 +359,23 @@ The variables most correlated with body fat percentage from each body section ar
 ### Regression equation and Interpretation
 
 ```{r}
-lm1 <- lm(Pct.BF ~ Abdomen + Bicep + Neck + Thigh, data = bodyfat)
+lm1 <- lm(Pct.BF ~ Abdomen + Bicep + Neck + Thigh, data = train)
 lm1
 ```
 
 Our estimates model is:
 
-$\widehat{\text{Pct.BF}} = -21.48 + 0.84 \, \text{Abdomen} + 0.065 \, \text{Bicep} - 0.82 \, \text{Neck} - 0.13 \, \text{Thigh}$
+$\widehat{\text{Pct.BF}} = -18.10 + 0.85 \, \text{Abdomen} + 0.02 \, \text{Bicep} - 0.96 \, \text{Neck} - 0.10 \, \text{Thigh}$
 
 The estimated coefficients represent the predicted change in body fat percentage for a one-unit increase in each predictor, holding all other variables constant.
 
--   A one-centimeter increase in Abdomen circumference is associated with a 0.84% increase in body fat percentage on average, holding Bicep, Neck, and Thigh constant.
+-   A one-centimeter increase in Abdomen circumference is associated with a 0.85% increase in body fat percentage on average, holding Bicep, Neck, and Thigh constant.
 
--   A one-centimeter increase in Bicep circumference is associated with a 0.07% increase in body fat percentage, but this effect is not statistically significant (p = 0.69).
+-   A one-centimeter increase in Bicep circumference is associated with a 0.02% increase in body fat percentage, but this effect is not statistically significant (p = 0.92).
 
--   A one-centimeter increase in Neck circumference is associated with a 0.82% decrease in body fat percentage on average, holding other variables constant.
+-   A one-centimeter increase in Neck circumference is associated with a 0.96% decrease in body fat percentage on average, holding other variables constant.
 
--   A one-centimeter increase in Thigh circumference is associated with a 0.13% decrease, but this effect is not statistically significant (p = 0.21).
+-   A one-centimeter increase in Thigh circumference is associated with a 0.10% decrease, but this effect is not statistically significant (p = 0.37).
 
 This suggests that Abdomen size is the strongest predictor of body fat, while Neck has a moderate negative association.
 
