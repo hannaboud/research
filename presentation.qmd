@@ -12,10 +12,13 @@ format:
     table-of-contents: true # (Optional) Creates a table of contents
     number-sections: true # (Optional) Puts numbers next to heading/subheadings
 ---
+
 # Problem
+
 Body fat percentage is an important diagnostic to know as it provides and accurate health assessment, can be used to manage risks of diseases, such as cardiovascular diseases and diabetes, and can inform fitness decisions to be targeted to an individual's unique body composition. However, people usually rely on oversimplified indicators such as BMI (Body Mass Index) or expensive tests, which are not accessible to everyone, to understand their body fat percentage. Our project will thus investigate how simple, accessible body measurements such as weight, age, height and various body circumference measurements, can reliably predict body fat percentage. By building a model which can successfully predict body fat percentage, individuals will be better equipped to track their health and fitness status without the need for specialised equipment or professional testing.
 
 # EDA
+
 ```{r, message=FALSE}
 library(tidyverse)
 library(readr)
@@ -34,6 +37,7 @@ theme_set(theme_bw())
 ```
 
 ## Data Quality and Cleaning
+
 ```{r}
 # Read in data and inspect
 bodyfat <- read_tsv("bodyfat.txt") 
@@ -45,28 +49,37 @@ glimpse(bodyfat)
 bodyfat$Age <- as.integer(bodyfat$Age)
 glimpse(bodyfat)
 ```
+
 Need to also convert `Weight`, which is currently in pounds, to kg and `Height`, which is currently in inches, to cm.
+
 ```{r}
 bodyfat$Weight <- bodyfat$Weight/2.205
 bodyfat$Height <- bodyfat$Height*2.54
 ```
+
 ```{r}
 glimpse(bodyfat)
 ```
+
 ### Missingness
+
 ```{r, warning=FALSE}
 visdat::vis_miss(bodyfat, sort_miss = TRUE) + # Sort the variables in descending order of missingness
   theme(axis.text.bodyfat = element_text(angle = 90, hjust = 0))
 ```
+
 No missing values are inputted and as all variable types are numeric, there are no string inputs such as 'None' to represent NA values. Therefore, the data is complete.
 
 ### Summary statistics
+
 ```{r}
 datasummary_skim(bodyfat)
 ```
 
 ## Dependent Variable
+
 The dependent variable that our group is going to predict is body fat percentage (`Pct.BF`). So as part of the EDA process, I will first visualise the distribution of this variable.
+
 ```{r, warning=FALSE}
 ggplot(bodyfat) +
   aes(x = Pct.BF) +
@@ -91,6 +104,7 @@ labs(title = "Boxplot of Body Fat Percentage", y = "Body Fat (%)", x = "") +
   theme(plot.title = element_text(hjust = 0.5))
 
 ```
+
 ```{r}
 ggplot(bodyfat) +
   aes(x = Pct.BF) +
@@ -99,12 +113,15 @@ ggplot(bodyfat) +
   theme_classic() +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+
 The investigation into the body fat percentage dependent variable (`Pct.bf`) has revealed that the distribution of this variable is approximately bell-shaped with a slight right skew, driven by a small number of individuals with unusually high body fat percentages above approximately 40%. These cases appear as outliers in the boxplot, which also explains the longer right tail in the histogram and density plots. Despite this mild skewness, the variable appears to be fairly symmetric, with a mean and median very close together. Therefore, no immediate transformation is required as the distribution is suited for modelling purposes and does not exhibit strong non-linearities.
 
 ## Independent Variables
+
 This section investigates the relationships between body fat percentage and other variables in the dataset, focusing on those that exhibit stronger correlations or meaningful dynamics with the dependent variable.
 
 ### Correlation Analysis
+
 ```{r}
 datasummary_correlation(bodyfat)
 ```
@@ -124,6 +141,7 @@ ggcorrplot(cor_matrix,
 From the correlation analysis, the variable most strongly associated with `Pct.BF` is `Density` (-0.99), which makes sense because body fat percentage is derived directly from density using Siri's equation. Several other strong correlations exist between `Pct.BF` and `Abdomen` (0.82), `Waist` (0.82), `Chest` (0.7), `Hip` (0.63) and `Weight` (0.62). Notably, `Abdomen` and `Waist` are perfectly collinear, indicating that both cannot be included in the same predictive model without introducing multicollinearity issues. Furthermore, the only variable negatively correlated with `Pct.BF` is `Height` (-0.03).
 
 ### Relationships
+
 ```{r}
 # All predictors
 vars_to_plot <- c("Density", "Abdomen","Waist","Chest","Hip","Weight","Thigh",
@@ -145,11 +163,13 @@ bodyfat |>
         strip.text = element_text(size = 10, face="bold"),
         plot.title = element_text(size = 14, face="bold", hjust=0.5))
 ```
+
 The scatterplots further confirm that body fat percentage has the strongest positive relationships with abdomen and waist size, closely followed by chest, hip and weight. Variables such as height and ankle show little association. While density also shows an almost perfect relationship, it provides negligible predictive value due its direct correlation to body fat percentage. Overall, torso-related measures seem to be the strongest predictors of body fat percentage.
 
 #### Deriving Categorical BMI variable
 
 Using the guidelines at https://www.health.gov.au/topics/overweight-and-obesity/bmi-and-waist.
+
 ```{r}
 bodyfat_wBMI <- bodyfat |> 
   mutate(
@@ -186,7 +206,9 @@ This boxplot shows that body fat percentage rises consistently across BMI catego
 # Model Selection
 
 ## Data Splitting
+
 First, splitting the data into training and test set to allow out-of-sample performance to be assessed and ensure no overfitting.
+
 ```{r}
 set.seed(71) # Set random seed
 
@@ -202,18 +224,22 @@ cat("Test set size (20%):", nrow(test), "\n")
 ```
 
 ## Basic Models
+
 ### Null Model
+
 ```{r}
 M0 = lm(Pct.BF ~ 1, data=train) # Null Model
 round(summary(M0)$coef, 3)
 ```
 
 ### Full Model
+
 ```{r}
 M1 = lm(Pct.BF ~., data=train) # Full Model
 round(summary(M1)$coef, 3)
 ```
-In the full model, majority of predictors are statistically insignificant (with `Pr(>|t|)` > 0.05) and this is potentially due to multicollinearity
+
+In the full model, majority of predictors are statistically insignificant (with `Pr(>|t|)` \> 0.05) and this is potentially due to multicollinearity
 
 ```{r}
 tryCatch({
@@ -222,24 +248,29 @@ tryCatch({
   message("Error shown intentionally: ", e$message)
 })
 ```
+
 ```{r}
 alias(M1)
 ```
 
 This shows that waist and abdomen are nearly perfectly correlated, therefore going to fix the full model as such:
+
 ```{r}
 M1_fixed <- lm(Pct.BF ~ Density + Age + Weight + Height + Neck + Chest +
                 Abdomen + Hip + Thigh + Knee + Ankle + Bicep + Forearm +                 Wrist, data = train)
 summary(M1_fixed)
 ```
+
 ```{r}
 vif(M1_fixed)
 ```
-There's high mutlicollinearity in this model (in variables with VIF > 5), therefore, we can try different models selection methods.
+
+There's high mutlicollinearity in this model (in variables with VIF \> 5), therefore, we can try different models selection methods.
 
 ## Stepwise Selection
 
 ### Backwards Stepwise
+
 ```{r}
 step.back.aic = step(M1_fixed, 
 					direction = "backward", 
@@ -248,12 +279,15 @@ summary(step.back.aic)
 ```
 
 ### Forward Stepwise
+
 ```{r}
 step.fwd.aic = step(M0, scope = list(lower = M0, upper = M1_fixed),
                     direction = "forward", trace = FALSE)
 summary(step.fwd.aic)
 ```
+
 ### Comparing Stepwise Models
+
 ```{r}
 sjPlot::tab_model(step.fwd.aic, step.back.aic, 
                   show.ci = FALSE, 
@@ -262,13 +296,17 @@ sjPlot::tab_model(step.fwd.aic, step.back.aic,
 ```
 
 ## Exhaustive Search
+
 ```{r}
 exh = lmSubsets(Pct.BF ~ ., data = train, nbest = 15)
 ```
+
 ```{r}
 plot(exh)
 ```
+
 The best model chosen from the exhaustive search is as such:
+
 ```{r}
 best_exh <- lmSelect(exh, criterion = "AIC")
 # Refit chosen model
@@ -277,6 +315,7 @@ summary(best_model)
 ```
 
 ## Summary of Simple Model Search
+
 ```{r}
 # Predictions on test set
 pred_full <- predict(M1_fixed, newdata = test)
@@ -304,3 +343,67 @@ results <- data.frame(
 print(results)
 ```
 
+## Multiple body section
+
+```{r}
+correlations <- cor(bodyfat[, c("Pct.BF", "Abdomen", "Chest", "Waist", "Hip",
+                                "Bicep", "Forearm", "Wrist",
+                                "Neck", 
+                                "Thigh", "Knee", "Ankle")], use = "complete.obs")
+
+correlations["Pct.BF", ]
+```
+
+The variables most correlated with body fat percentage from each body section are: Abdomen (torso), Bicep (arms), Neck (neck/head), and Thigh (legs). Abdomen and waist show the strongest correlation overall (r = 0.82).
+
+### Regression equation and Interpretation
+
+```{r}
+lm1 <- lm(Pct.BF ~ Abdomen + Bicep + Neck + Thigh, data = bodyfat)
+lm1
+```
+
+Our estimates model is:
+
+$\widehat{\text{Pct.BF}} = -21.48 + 0.84 \, \text{Abdomen} + 0.065 \, \text{Bicep} - 0.82 \, \text{Neck} - 0.13 \, \text{Thigh}$
+
+The estimated coefficients represent the predicted change in body fat percentage for a one-unit increase in each predictor, holding all other variables constant.
+
+-   A one-centimeter increase in Abdomen circumference is associated with a 0.84% increase in body fat percentage on average, holding Bicep, Neck, and Thigh constant.
+
+-   A one-centimeter increase in Bicep circumference is associated with a 0.07% increase in body fat percentage, but this effect is not statistically significant (p = 0.69).
+
+-   A one-centimeter increase in Neck circumference is associated with a 0.82% decrease in body fat percentage on average, holding other variables constant.
+
+-   A one-centimeter increase in Thigh circumference is associated with a 0.13% decrease, but this effect is not statistically significant (p = 0.21).
+
+This suggests that Abdomen size is the strongest predictor of body fat, while Neck has a moderate negative association.
+
+### **Model Performance**
+
+```{r}
+summary(lm1)
+```
+
+The regression model shows that abdomen circumference and neck circumference are significant predictors of body fat percentage (p \< 0.001). Specifically, body fat increases with larger abdomen size and decreases with larger neck size. The model explains about 70% of the variation in body fat (Adjusted R² = 0.70), indicating a strong overall fit.
+
+### Model diagnostics
+
+```{r}
+library(broom)
+aug <- augment(lm1)
+ggplot(aug, aes(.fitted, .std.resid)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, color = "blue") +
+  labs(x = "Fitted", y = "Std. Residual")
+```
+
+```{r}
+ggplot(aug, aes(sample = .std.resid)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+The residual vs fitted plot shows no clear pattern, suggesting that the assumptions of linearity and constant variance are reasonably satisfied.\
+The Q-Q plot indicates that residuals follow a roughly normal distribution, with only slight deviations at the tails.\
+Overall, the diagnostic plots suggest that the regression model fits the data adequately and meets key model assumptions.
