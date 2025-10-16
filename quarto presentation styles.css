@@ -1,0 +1,15 @@
+.reveal .quarto-title-block .subtitle {
+  font-size: 30px;
+}
+
+.reveal .quarto-title-block .quarto-title-authors {
+  font-size: 25px;
+}
+
+.reveal h2  { font-size: 30px; }
+.reveal p  { font-size: 25px; }
+
+.reveal pre code {
+  font-size: 14px;   /* Makes code output more compact */
+  line-height: 1.2;  /* Tightens spacing */
+}

@@ -343,7 +343,7 @@ results <- data.frame(
 print(results)
 ```
 
-## Multiple body section
+## Multiple Body Sections
 
 ```{r}
 correlations <- cor(bodyfat[, c("Pct.BF", "Abdomen", "Chest", "Waist", "Hip",
@@ -386,6 +386,21 @@ summary(lm1)
 ```
 
 The regression model shows that abdomen circumference and neck circumference are significant predictors of body fat percentage (p \< 0.001). Specifically, body fat increases with larger abdomen size and decreases with larger neck size. The model explains about 70% of the variation in body fat (Adjusted R² = 0.70), indicating a strong overall fit.
+
+```{r}
+pred_mbs  <- predict(lm1, newdata = test)
+
+results <- data.frame(
+  Model = c("Full Model", "Forward Stepwise", "Backward Stepwise",                  "Exhaustive (BIC)", "Multiple Body Sections"),
+  RMSE  = c(RMSE(y_test, pred_full),
+            RMSE(y_test, pred_fwd),
+            RMSE(y_test, pred_back),
+            RMSE(y_test, pred_exh),
+            RMSE(y_test, pred_mbs))
+)
+
+print(results)
+```
 
 ### Model diagnostics
 

@@ -1,18 +1,14 @@
 ---
 title: "Modeling Body Fat"
-subtitle: "L01G01"
-author: "Lara Burns, Karin Gao, Qiuyu Liu, Bryan Chan and Hanna Boudara"
+subtitle: "How Do Body Characteristics Affect Body Fat Percentage?"
+author: "L01G01: Lara Burns, Karin Gao, Qiuyu Liu, Bryan Chan and Hanna Boudara"
 format: 
   revealjs:
-    footer: How Body Characteristics Shape Fat Percentage
     auto-slide: 20000
     embed-resources: true
     transition: slide
+    css: "quarto presentation styles.css"
 ---
-
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
 
 ```{r, message=FALSE}
 library(tidyverse)
@@ -31,9 +27,9 @@ library(lmSubsets)
 theme_set(theme_bw())
 ```
 
-## EDA
+## Data Cleaning and Splitting
 
-After data cleaning:
+The original data had no missing values. For the variable `Weight`, which was in pounds, was converted to kilograms and `Height`, which was in inches, to centimeters. After this data cleaning, we had the following data set to build our models upon:
 
 ```{r}
 # Read in data and inspect
@@ -45,7 +41,10 @@ bodyfat$Age <- as.integer(bodyfat$Age)
 bodyfat$Weight <- bodyfat$Weight/2.205
 bodyfat$Height <- bodyfat$Height*2.54
 glimpse(bodyfat)
+
 ```
+
+Our models were built on 80% of the data set, designated as the training data, and the models' performance was built on the remaining 20% of the data, designated as the test data.
 
 ```{r}
 set.seed(71) # Set random seed
@@ -53,6 +52,45 @@ set.seed(71) # Set random seed
 split <- sample.split(bodyfat$Pct.BF, SplitRatio = 0.8)
 train <- subset(bodyfat, split == TRUE)
 test <- subset(bodyfat, split == FALSE)
+```
+
+## Exploratory Analysis of the Data
+
+```{r}
+# install.packages("patchwork")
+library(patchwork)  
+
+# Histogram of Body Fat %
+p1 <- ggplot(bodyfat, aes(x = Pct.BF)) +
+  geom_histogram(binwidth = 3, boundary = 0,
+                 fill = "lightblue", color = "white", alpha = 0.9) +
+  labs(title = "Distribution of Body Fat Percentage",
+       x = "Body Fat (%)", y = "Count") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Scatter plots
+vars_to_plot <- c("Density", "Abdomen","Waist","Chest","Hip","Weight","Thigh",
+                  "Neck","Knee","Bicep","Forearm","Wrist","Age","Ankle","Height")
+
+p2 <- bodyfat %>%
+  select(Pct.BF, all_of(vars_to_plot)) %>%
+  pivot_longer(cols = all_of(vars_to_plot),
+               names_to = "variable", values_to = "value") %>%
+  drop_na() %>%
+  ggplot(aes(x = value, y = Pct.BF)) +
+  geom_point(alpha = 0.5, colour = "lightblue", size = 0.9) +
+  geom_smooth(method = "lm", se = TRUE, colour = "red", linewidth = 0.7) +
+  facet_wrap(~ variable, scales = "free_x", ncol = 5) +
+  labs(x = NULL, y = "Body Fat (%)",
+       title = "Relationships between Body Fat % and Predictors") +
+  theme_classic() + 
+  theme(legend.position = "top",
+        strip.text = element_text(size = 10),
+        plot.title = element_text(size = 14, hjust=0.5))
+
+# Combining graphs together
+p1 + p2 + plot_layout(widths = c(1, 2))
 ```
 
 ## Multiple Body Sections: Examining Correlations
@@ -68,12 +106,13 @@ Generated regression statistics:
 summary(lm1)
 ```
 
-## Multiple Body Sections:  Graphing of Residuals + QQ Plot
+## Multiple Body Sections: Graphing of Residuals + QQ Plot
 
 ```{r}
+# install.packages("broom")
+library(broom)
 # install.packages("patchwork")
 library(patchwork)
-library(broom)
 
 aug <- augment(lm1)
 
