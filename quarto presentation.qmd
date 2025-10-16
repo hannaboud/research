@@ -93,26 +93,43 @@ p2 <- bodyfat %>%
 p1 + p2 + plot_layout(widths = c(1, 2))
 ```
 
-## Multiple Body Sections: Examining Correlations
+## Multiple Body Sections Model
+
+Examining correlations:
+
+```{r}
+correlations <- cor(bodyfat[, c("Pct.BF", "Abdomen", "Chest", "Waist", "Hip",
+                                "Bicep", "Forearm", "Wrist",
+                                "Neck", 
+                                "Thigh", "Knee", "Ankle")], use = "complete.obs")
+
+correlations["Pct.BF", ]
+```
+
+The variables most correlated with body fat percentage from each body section are: `Abdomen` (torso), `Bicep` (arms), `Neck` (neck/head), and `Thigh` (legs). The resulting model using these:
 
 ```{r}
 lm1 <- lm(Pct.BF ~ Abdomen + Bicep + Neck + Thigh, data = train)
-lm1
-```
-
-Generated regression statistics:
-
-```{r}
 summary(lm1)
 ```
 
-## Multiple Body Sections: Graphing of Residuals + QQ Plot
+The resulting Root Mean Squared Error (RMSE) when comparing out-of-sample performance:
+
+```{r}
+y_test <- test$Pct.BF
+pred_mbp <- predict(lm1, newdata = test)
+
+# Helper function
+RMSE <- function(actual, predicted) sqrt(mean((actual - predicted)^2))
+
+RMSE(y_test, pred_mbp)
+```
+
+## Graphing of Residuals + QQ Plot (To be used for best overall model)
 
 ```{r}
 # install.packages("broom")
 library(broom)
-# install.packages("patchwork")
-library(patchwork)
 
 aug <- augment(lm1)
 
