@@ -10,6 +10,20 @@
 .reveal p  { font-size: 25px; }
 
 .reveal pre code {
-  font-size: 14px;   /* Makes code output more compact */
+  font-size: 16px;   /* Makes code output more compact */
   line-height: 1.2;  /* Tightens spacing */
+}
+
+.reveal .MathJax_Display {
+  font-size: 0.9em; /* 85% of normal size */
+}
+
+/* Makes inline math smaller */
+.reveal .MathJax {
+  font-size: 0.9em;
+}
+
+/* Makes tables smaller */
+.cell-output-display table {
+  font-size: 0.7em;
 }

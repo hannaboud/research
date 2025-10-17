@@ -1,7 +1,7 @@
 ---
 title: "Modeling Body Fat"
-subtitle: "How Do Body Characteristics Affect Body Fat Percentage?"
-author: "L01G01: Lara Burns, Karin Gao, Qiuyu Liu, Bryan Chan and Hanna Boudara"
+subtitle: "L01G01"
+author: "Lara Burns, Karin Gao, Qiuyu Liu, Bryan Chan and Hanna Boudara"
 format: 
   revealjs:
     auto-slide: 20000
@@ -26,6 +26,10 @@ library(insight)
 library(lmSubsets)
 theme_set(theme_bw())
 ```
+
+## Motivation and Research Question
+
+Research Question: How do body characteristics affect body fat percentage?
 
 ## Data Cleaning and Splitting
 
@@ -54,7 +58,7 @@ train <- subset(bodyfat, split == TRUE)
 test <- subset(bodyfat, split == FALSE)
 ```
 
-## Exploratory Analysis of the Data
+## Exploratory Data Analysis
 
 ```{r}
 # install.packages("patchwork")
@@ -93,6 +97,53 @@ p2 <- bodyfat %>%
 p1 + p2 + plot_layout(widths = c(1, 2))
 ```
 
+## Full Linear Model
+
+```{r}
+M1 = lm(Pct.BF ~., data=train) # Full Model
+round(summary(M1)$coef, 3)
+```
+
+Our resulting model is:
+
+$$
+\widehat{\text{Pct.BF}} = 484.598- 438.310(\text{Density})+ 0.008(\text{Age})+ 0.016(\text{Weight})- 0.021(\text{Height}) \\+ 0.027(\text{Neck})- 0.003(\text{Chest})- 0.006(\text{Abdomen})+ 0.024(\text{Hip})- 0.001(\text{Thigh}) \\- 0.048(\text{Knee})+ 0.016(\text{Ankle})- 0.003(\text{Bicep})+ 0.005(\text{Forearm})- 0.098(\text{Wrist})
+$$
+
+```{r}
+# Helper function
+model_footer <- function(model) {
+  s <- summary(model)
+  
+  # Extract p-value from F-statistic
+  p_val <- pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3], lower.tail = FALSE)
+  
+  # Print formatted summary
+  cat(
+    sprintf("Residual standard error: %.3f on %d degrees of freedom\n", s$sigma, s$df[2]),
+    sprintf("Multiple R-squared: %.4f, Adjusted R-squared: %.4f\n", s$r.squared, s$adj.r.squared),
+    sprintf("F-statistic: %.1f on %d and %d DF, p-value: %.3g\n",
+            s$fstatistic["value"], s$fstatistic["numdf"], s$fstatistic["dendf"], p_val)
+  )
+}
+```
+
+```{r}
+model_footer(M1)
+```
+
+## Full Linear Model (Continued)
+
+In the full model, majority of predictors are statistically insignificant (with `Pr(>|t|)` \> 0.05) and this is potentially due to multi-collinearity between the predictors.
+
+```{r}
+alias(M1)
+```
+
+This shows that waist and abdomen are nearly perfectly correlated. This would make model predictions unstable, hence we can try different models selection methods.
+
+## Model with Interaction Term
+
 ## Multiple Body Sections Model
 
 Examining correlations:
@@ -110,20 +161,127 @@ The variables most correlated with body fat percentage from each body section ar
 
 ```{r}
 lm1 <- lm(Pct.BF ~ Abdomen + Bicep + Neck + Thigh, data = train)
-summary(lm1)
+round(summary(lm1)$coef, 3)
 ```
 
-The resulting Root Mean Squared Error (RMSE) when comparing out-of-sample performance:
+Our resulting model is:
+
+$\widehat{\text{Pct.BF}} = -18.10 + 0.85 \, \text{Abdomen} + 0.02 \, \text{Bicep} - 0.96 \, \text{Neck} - 0.10 \, \text{Thigh}$
+
+```{r}
+model_footer(lm1)
+```
+
+## Backwards Selection
+
+```{r}
+step.back.aic = step(M1, 
+					direction = "backward", 
+					trace = FALSE) 
+round(summary(step.back.aic)$coef, 3)
+```
+
+Our resulting model is:
+
+$$
+\widehat{\text{Pct.BF}} = 485.766 - 440.672(\text{Density}) - 0.021(\text{Height}) + 0.021(\text{Hip})
+$$
+
+```{r}
+model_footer(step.back.aic)
+```
+
+## Forward Selection
+
+```{r}
+M0 = lm(Pct.BF ~ 1, data=train) # Null model
+step.fwd.aic = step(M0, scope = list(lower = M0, upper = M1),
+                    direction = "forward", trace = FALSE)
+round(summary(step.fwd.aic)$coef, 3)
+```
+
+Our resulting model is:
+
+$$
+\widehat{\text{Pct.BF}} = 486.473 - 439.635(\text{Density}) - 0.025(\text{Height}) + 0.014(\text{Weight})
+$$
+
+```{r}
+model_footer(step.fwd.aic)
+```
+
+## Comparing Stepwise Models
+
+```{r}
+sjPlot::tab_model(step.fwd.aic, step.back.aic, 
+                  show.ci = FALSE, 
+                  show.aic = TRUE,
+                  dv.labels = c("Forward model", "Backward model"))
+```
+
+## Exhaustive Search
+
+```{r}
+exh = lmSubsets(Pct.BF ~ ., data = train, nbest = 15)
+plot(exh)
+```
+
+## Exhaustive Search Continued
+
+```{r}
+best_exh <- lmSelect(exh, criterion = "AIC")
+# Refit chosen model
+best_model <- lm(formula(best_exh), data = train)
+round(summary(best_model)$coef, 3)
+```
+
+Our resulting model:
+
+$$
+\begin{aligned}\widehat{\text{Pct.BF}} = {} & 484.598- 438.310(\text{Density})+ 0.008(\text{Age})+ 0.016(\text{Weight})- 0.021(\text{Height}) \\& + 0.027(\text{Neck})- 0.003(\text{Chest})- 0.006(\text{Abdomen})+ 0.024(\text{Hip})- 0.001(\text{Thigh}) \\& - 0.048(\text{Knee})+ 0.016(\text{Ankle})- 0.003(\text{Bicep})+ 0.005(\text{Forearm})- 0.098(\text{Wrist})\end{aligned}
+$$
+
+```{r}
+model_footer(best_model)
+```
+
+## Comparing All Models
 
 ```{r}
 y_test <- test$Pct.BF
+
+# Predictions on test set
+pred_full <- predict(M1, newdata = test)
+pred_fwd  <- predict(step.fwd.aic, newdata = test)
+pred_back <- predict(step.back.aic, newdata = test)
+pred_exh  <- predict(best_model, newdata = test)
 pred_mbp <- predict(lm1, newdata = test)
 
 # Helper function
 RMSE <- function(actual, predicted) sqrt(mean((actual - predicted)^2))
 
-RMSE(y_test, pred_mbp)
+results <- data.frame(
+  Model = c("Full Model", "Multiple Body Parts", "Forward Stepwise",
+            "Backward Stepwise", "Exhaustive (BIC)"),
+  RMSE  = c(RMSE(y_test, pred_full),
+            RMSE(y_test, pred_mbp),
+            RMSE(y_test, pred_fwd),
+            RMSE(y_test, pred_back),
+            RMSE(y_test, pred_exh))
+  )
+
+print(results)
 ```
+
+## Best Overall Model
+
+-   List the best model's equation
+
+-   Interpret coefficient signs and magnitudes
+
+-   Discuss statistically significant predictors
+
+## Assumptions of the Model
 
 ## Graphing of Residuals + QQ Plot (To be used for best overall model)
 
@@ -145,3 +303,11 @@ p2 <- ggplot(aug, aes(sample = .std.resid)) +
 # Combine plots side by side
 p1 + p2
 ```
+
+## Limitations
+
+-   Include recommendations for future research
+
+## Key Findings
+
+# Thank You
