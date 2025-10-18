@@ -21,6 +21,7 @@ Body fat percentage is an important diagnostic to know as it provides and accura
 
 ```{r, message=FALSE}
 library(tidyverse)
+library(broom)
 library(readr)
 # install.packages("modelsummary")
 library(modelsummary)
@@ -378,6 +379,44 @@ The estimated coefficients represent the predicted change in body fat percentage
 -   A one-centimeter increase in Thigh circumference is associated with a 0.10% decrease, but this effect is not statistically significant (p = 0.37).
 
 This suggests that Abdomen size is the strongest predictor of body fat, while Neck has a moderate negative association.
+
+## Abdomen and chest 
+
+```{r}
+lm_bh = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip + Abdomen:Chest, data = train)
+summary(lm_bh)
+```
+## Assumptions
+
+```{r}
+aug_bh = augment(lm_bh)
+
+ggplot(aug_bh, aes(.fitted, .std.resid)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, color = "red") + 
+  labs(x = "Fitted values", y = "Standardized Residuals", title = "Residuals vs Fitted for Abdomen x Chest") +
+  geom_smooth(method = "loess", se = FALSE)
+
+ggplot(aug_bh, aes(sample = .std.resid)) +
+  stat_qq() +
+  stat_qq_line() +
+  labs(title = "Q-Q Plot of Residuals")
+```
+```{r}
+pred_bh = predict(lm_bh, newdata = test)
+RMSE = function(actual, predicted) sqrt(mean((actual - predicted)^2))
+rmse_bh = RMSE(test$Pct.BF, pred_bh)
+rmse_bh
+
+```
+
+```{r}
+summary(lm_bh)
+
+```
+
+
+
 
 ### **Model Performance**
 
