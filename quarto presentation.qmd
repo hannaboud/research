@@ -24,6 +24,7 @@ library(sjPlot)
 library(insight)
 # install.packages("lmSubsets")
 library(lmSubsets)
+library(broom)
 theme_set(theme_bw())
 ```
 
@@ -62,7 +63,7 @@ test <- subset(bodyfat, split == FALSE)
 
 ```{r}
 # install.packages("patchwork")
-library(patchwork)  
+library(patchwork)
 
 # Histogram of Body Fat %
 p1 <- ggplot(bodyfat, aes(x = Pct.BF)) +
@@ -143,6 +144,31 @@ alias(M1)
 This shows that waist and abdomen are nearly perfectly correlated. This would make model predictions unstable, hence we can try different models selection methods.
 
 ## Model with Interaction Term
+
+```{r}
+lm_bh = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip + Abdomen:Chest, data = train)
+summary(lm_bh)
+```
+## Assumptions
+
+```{r}
+aug_bh = augment(lm_bh)
+
+ggplot(aug_bh, aes(.fitted, .std.resid)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, color = "red") + 
+  labs(x = "Fitted values", y = "Standardized Residuals", title = "Residuals vs Fitted for Abdomen x Chest") +
+  geom_smooth(method = "loess", se = FALSE)
+
+```
+
+```{r}
+ggplot(aug_bh, aes(sample = .std.resid)) +
+  stat_qq() +
+  stat_qq_line() +
+  labs(title = "Q-Q Plot of Residuals")
+```
+
 
 ## Multiple Body Sections Model
 
