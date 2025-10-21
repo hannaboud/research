@@ -27,3 +27,15 @@
 .cell-output-display table {
   font-size: 0.7em;
 }
+
+/* Fix sjPlot table overflow and scaling */
+.reveal table {
+  width:60% !important;
+  margin-left: 30% !important;
+  margin-right: auto!important;
+  font-size: 0.45em!important;
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+}

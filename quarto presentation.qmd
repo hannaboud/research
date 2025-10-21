@@ -101,15 +101,13 @@ p1 + p2 + plot_layout(widths = c(1, 2))
 ## Full Linear Model
 
 ```{r}
-M1 = lm(Pct.BF ~., data=train) # Full Model
+M1 = lm(Pct.BF ~.-Density, data=train) # Full Model without density
 round(summary(M1)$coef, 3)
 ```
 
 Our resulting model is:
 
-$$
-\widehat{\text{Pct.BF}} = 484.598- 438.310(\text{Density})+ 0.008(\text{Age})+ 0.016(\text{Weight})- 0.021(\text{Height}) \\+ 0.027(\text{Neck})- 0.003(\text{Chest})- 0.006(\text{Abdomen})+ 0.024(\text{Hip})- 0.001(\text{Thigh}) \\- 0.048(\text{Knee})+ 0.016(\text{Ankle})- 0.003(\text{Bicep})+ 0.005(\text{Forearm})- 0.098(\text{Wrist})
-$$
+$$\widehat{\text{Pct.BF}} = 484.598 + 0.008(\text{Age})+ 0.016(\text{Weight})- 0.021(\text{Height}) \\+ 0.027(\text{Neck})- 0.003(\text{Chest})- 0.006(\text{Abdomen})+ 0.024(\text{Hip})- 0.001(\text{Thigh}) \\- 0.048(\text{Knee})+ 0.016(\text{Ankle})- 0.003(\text{Bicep})+ 0.005(\text{Forearm})- 0.098(\text{Wrist})$$
 
 ```{r}
 # Helper function
@@ -149,25 +147,25 @@ This shows that waist and abdomen are nearly perfectly correlated. This would ma
 lm_bh = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip + Abdomen:Chest, data = train)
 summary(lm_bh)
 ```
+
 ## Assumptions
 
 ```{r}
 aug_bh = augment(lm_bh)
 
-ggplot(aug_bh, aes(.fitted, .std.resid)) +
-  geom_point(alpha = 0.6) +
-  geom_hline(yintercept = 0, color = "red") + 
-  labs(x = "Fitted values", y = "Standardized Residuals", title = "Residuals vs Fitted for Abdomen x Chest") +
-  geom_smooth(method = "loess", se = FALSE)
+p1 <- ggplot(aug_bh, aes(.fitted, .std.resid)) +
+geom_point(alpha = 0.6) +
+geom_hline(yintercept = 0, color = "red") + 
+labs(x = "Fitted values", y = "Standardized Residuals", title = "Residuals vs Fitted for Abdomen x Chest") +
+geom_smooth(method = "loess", se = FALSE)
 
+p2 <- ggplot(aug_bh, aes(sample = .std.resid)) +
+stat_qq() +
+stat_qq_line() +
+labs(title = "Q-Q Plot of Residuals")
+p1 + p2
 ```
 
-```{r}
-ggplot(aug_bh, aes(sample = .std.resid)) +
-  stat_qq() +
-  stat_qq_line() +
-  labs(title = "Q-Q Plot of Residuals")
-```
 ```{r}
 pred_bh = predict(lm_bh, newdata = test)
 RMSE = function(actual, pred) sqrt(mean((actual - pred)^2))
@@ -175,11 +173,13 @@ rmse_bh = RMSE(test$Pct.BF, pred_bh)
 rmse_bh
 
 ```
+
 ```{r}
 lm_bh_noint = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip, data = train)
 anova(lm_bh_noint, lm_bh)  # Likelihood ratio test
 AIC(lm_bh_noint, lm_bh)    # Compare the model selection criteria
 ```
+
 ```{r}
 # Refit without interaction, bc high p-value
 lm_bh_final <- lm(Pct.BF ~ Abdomen + Waist + Chest + Hip, data = train)
@@ -189,7 +189,6 @@ pred_bh_final <- predict(lm_bh_final, newdata = test)
 rmse_bh_final <- RMSE(test$Pct.BF, pred_bh_final)
 rmse_bh_final
 ```
-
 
 ## Multiple Body Sections Model
 
@@ -230,9 +229,7 @@ round(summary(step.back.aic)$coef, 3)
 
 Our resulting model is:
 
-$$
-\widehat{\text{Pct.BF}} = 485.766 - 440.672(\text{Density}) - 0.021(\text{Height}) + 0.021(\text{Hip})
-$$
+$$\widehat{Pct.BF} = 9.551 - 0.114(Height) - 0.625(Neck) + 0.940(Abdomen) - 1.217(Wrist)$$
 
 ```{r}
 model_footer(step.back.aic)
@@ -278,7 +275,7 @@ plot(exh)
 ```{r}
 best_exh <- lmSelect(exh, criterion = "AIC")
 # Refit chosen model
-best_model <- lm(formula(best_exh), data = train)
+best_model <- lm(update(formula(best_exh), . ~ . - Density), data = train)
 round(summary(best_model)$coef, 3)
 ```
 
@@ -299,24 +296,37 @@ y_test <- test$Pct.BF
 
 # Predictions on test set
 pred_full <- predict(M1, newdata = test)
-pred_fwd  <- predict(step.fwd.aic, newdata = test)
+pred_fwd <- predict(step.fwd.aic, newdata = test)
 pred_back <- predict(step.back.aic, newdata = test)
-pred_exh  <- predict(best_model, newdata = test)
+pred_exh <- predict(best_model, newdata = test)
 pred_mbp <- predict(lm1, newdata = test)
 
 # Helper function
 RMSE <- function(actual, predicted) sqrt(mean((actual - predicted)^2))
+MAE <- function(actual, predicted) mean(abs(actual - predicted))
+R2 <- function(actual, predicted) cor(actual, predicted)^2
 
 results <- data.frame(
-  Model = c("Full Model", "Multiple Body Parts", "Forward Stepwise",
-            "Backward Stepwise", "Exhaustive (BIC)"),
-  RMSE  = c(RMSE(y_test, pred_full),
-            RMSE(y_test, pred_mbp),
-            RMSE(y_test, pred_fwd),
-            RMSE(y_test, pred_back),
-            RMSE(y_test, pred_exh))
-  )
-
+Model = c("Full Model", "Multiple Body Parts", "Forward Stepwise",
+"Backward Stepwise", "Exhaustive (BIC)"),
+RMSE = c(RMSE(y_test, pred_full),
+RMSE(y_test, pred_mbp),
+RMSE(y_test, pred_fwd),
+RMSE(y_test, pred_back),
+RMSE(y_test, pred_exh)),
+MAE = c(MAE(y_test, pred_full),
+MAE(y_test, pred_mbp),
+MAE(y_test, pred_fwd),
+MAE(y_test, pred_back),
+MAE(y_test, pred_exh)),
+R2 = c(R2(y_test, pred_full),
+R2(y_test, pred_mbp),
+R2(y_test, pred_fwd),
+R2(y_test, pred_back),
+R2(y_test, pred_exh))
+)
+results <- results[order(results$RMSE), ]
+rownames(results) <- NULL
 print(results)
 ```
 
