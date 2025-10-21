@@ -214,9 +214,6 @@ Our resulting model is:
 
 $\widehat{\text{Pct.BF}} = -18.10 + 0.85 \, \text{Abdomen} + 0.02 \, \text{Bicep} - 0.96 \, \text{Neck} - 0.10 \, \text{Thigh}$
 
-```{r}
-model_footer(lm1)
-```
 
 ## Backwards Selection
 
@@ -250,9 +247,6 @@ $$
 \widehat{\text{Pct.BF}} = 486.473 - 439.635(\text{Density}) - 0.025(\text{Height}) + 0.014(\text{Weight})
 $$
 
-```{r}
-model_footer(step.fwd.aic)
-```
 
 ## Comparing Stepwise Models
 
