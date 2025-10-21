@@ -98,7 +98,7 @@ p2 <- bodyfat %>%
 p1 + p2 + plot_layout(widths = c(1, 2))
 ```
 
-## Full Linear Model
+## Full Linear Model: $$\widehat{\text{Pct.BF}} = 4.22 + 0.07(\text{Age}) - 0.04(\text{Weight})- 0.10(\text{Height}) - 0.63(\text{Neck}) - 0.15(\text{Chest}) + 0.96(\text{Abdomen}) \\ - 0.24(\text{Hip}) + 0.30(\text{Thigh}) - 0.21(\text{Knee}) + 0.30(\text{Ankle}) + 0.14(\text{Bicep})+ 0.35(\text{Forearm}) -1.37(\text{Wrist})$$
 
 ```{r}
 M1 = lm(Pct.BF ~.-Density, data=train) # Full Model without density
@@ -190,7 +190,7 @@ rmse_bh_final <- RMSE(test$Pct.BF, pred_bh_final)
 rmse_bh_final
 ```
 
-## Multiple Body Sections Model
+## Multiple Body Sections Model: $\widehat{\text{Pct.BF}} = -18.10 + 0.85(\text{Abdomen}) + 0.02(\text{Bicep}) - 0.96(\text{Neck}) - 0.10(\text{Thigh})$
 
 Examining correlations:
 
@@ -215,7 +215,7 @@ Our resulting model is:
 $\widehat{\text{Pct.BF}} = -18.10 + 0.85 \, \text{Abdomen} + 0.02 \, \text{Bicep} - 0.96 \, \text{Neck} - 0.10 \, \text{Thigh}$
 
 
-## Backwards Selection
+## Backwards Selection: $$\widehat{\text{Pct.BF}} = 9.55 + 0.06(\text{Age}) - 0.114(\text{Height})- 0.63(\text{Neck}) -0.15(\text{Chest})+ 0.94(\text{Abdomen}) \\ - 0.27(\text{Hip}) + 0.29(\text{Thigh}) +0.37(\text{Forearm})- 1.22(\text{Wrist})$$
 
 ```{r}
 step.back.aic = step(M1, 
@@ -232,7 +232,7 @@ $$\widehat{Pct.BF} = 9.551 - 0.114(Height) - 0.625(Neck) + 0.940(Abdomen) - 1.21
 model_footer(step.back.aic)
 ```
 
-## Forward Selection
+## Forward Selection: $$\widehat{\text{Pct.BF}} = -32.68  + 2.59(\text{ Waist}) - 0.28(\text{Weight}) - 0.98(\text{Wrist})\\ + 0.25(\text{Bicep}) - 0.51(\text{Neck}) + 0.33(\text{Forearm})$$
 
 ```{r}
 M0 = lm(Pct.BF ~ 1, data=train) # Null model
@@ -264,7 +264,7 @@ exh = lmSubsets(Pct.BF ~ ., data = train, nbest = 15)
 plot(exh)
 ```
 
-## Exhaustive Search Continued
+## Exhaustive Model: $$\widehat{\text{Pct.BF}} = 4.22 + 0.07(\text{Age}) - 0.04(\text{Weight})  - 0.10(\text{Height}) - 0.63(\text{Neck}) \\- 0.15(\text{Chest}) + 0.96(\text{Abdomen})  - 0.24(\text{Hip}) + 0.30(\text{Thigh}) - 0.21(\text{Knee}) \\+ 0.30(\text{Ankle}) +0.15(\text{Bicep})+ 0.35(\text{Forearm})- 1.37(\text{Wrist})$$
 
 ```{r}
 best_exh <- lmSelect(exh, criterion = "AIC")
