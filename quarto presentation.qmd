@@ -168,6 +168,27 @@ ggplot(aug_bh, aes(sample = .std.resid)) +
   stat_qq_line() +
   labs(title = "Q-Q Plot of Residuals")
 ```
+```{r}
+pred_bh = predict(lm_bh, newdata = test)
+RMSE = function(actual, pred) sqrt(mean((actual - pred)^2))
+rmse_bh = RMSE(test$Pct.BF, pred_bh)
+rmse_bh
+
+```
+```{r}
+lm_bh_noint = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip, data = train)
+anova(lm_bh_noint, lm_bh)  # Likelihood ratio test
+AIC(lm_bh_noint, lm_bh)    # Compare the model selection criteria
+```
+```{r}
+# Refit without interaction, bc high p-value
+lm_bh_final <- lm(Pct.BF ~ Abdomen + Waist + Chest + Hip, data = train)
+
+# RMSE
+pred_bh_final <- predict(lm_bh_final, newdata = test)
+rmse_bh_final <- RMSE(test$Pct.BF, pred_bh_final)
+rmse_bh_final
+```
 
 
 ## Multiple Body Sections Model
