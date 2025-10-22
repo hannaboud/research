@@ -98,7 +98,7 @@ p2 <- bodyfat %>%
 p1 + p2 + plot_layout(widths = c(1, 2))
 ```
 
-## Full Linear Model: $$\widehat{\text{Pct.BF}} = 4.22 + 0.07(\text{Age}) - 0.04(\text{Weight})- 0.10(\text{Height}) - 0.63(\text{Neck}) - 0.15(\text{Chest}) + 0.96(\text{Abdomen}) \\ - 0.24(\text{Hip}) + 0.30(\text{Thigh}) - 0.21(\text{Knee}) + 0.30(\text{Ankle}) + 0.14(\text{Bicep})+ 0.35(\text{Forearm}) -1.37(\text{Wrist})$$
+## Full Linear Model
 
 ```{r}
 M1 = lm(Pct.BF ~.-Density, data=train) # Full Model without density
@@ -190,7 +190,7 @@ rmse_bh_final <- RMSE(test$Pct.BF, pred_bh_final)
 rmse_bh_final
 ```
 
-## Multiple Body Sections Model: $\widehat{\text{Pct.BF}} = -18.10 + 0.85(\text{Abdomen}) + 0.02(\text{Bicep}) - 0.96(\text{Neck}) - 0.10(\text{Thigh})$
+## Multiple Body Sections Model
 
 Examining correlations:
 
@@ -214,7 +214,8 @@ Our resulting model is:
 
 $\widehat{\text{Pct.BF}} = -18.10 + 0.85 \, \text{Abdomen} + 0.02 \, \text{Bicep} - 0.96 \, \text{Neck} - 0.10 \, \text{Thigh}$
 
-## Backwards Selection: $$\widehat{\text{Pct.BF}} = 9.55 + 0.06(\text{Age}) - 0.114(\text{Height})- 0.63(\text{Neck}) -0.15(\text{Chest})+ 0.94(\text{Abdomen}) \\ - 0.27(\text{Hip}) + 0.29(\text{Thigh}) +0.37(\text{Forearm})- 1.22(\text{Wrist})$$
+
+## Backwards Selection
 
 ```{r}
 step.back.aic = step(M1, 
@@ -231,20 +232,46 @@ $$\widehat{Pct.BF} = 9.551 - 0.114(Height) - 0.625(Neck) + 0.940(Abdomen) - 1.21
 model_footer(step.back.aic)
 ```
 
-## Forward Selection: $$\widehat{\text{Pct.BF}} = -32.68  + 2.59(\text{ Waist}) - 0.28(\text{Weight}) - 0.98(\text{Wrist})\\ + 0.25(\text{Bicep}) - 0.51(\text{Neck}) + 0.33(\text{Forearm})$$
+## Forward Selection
 
 ```{r}
 M0 = lm(Pct.BF ~ 1, data=train) # Null model
 step.fwd.aic = step(M0, scope = list(lower = M0, upper = M1),
                     direction = "forward", trace = FALSE)
 round(summary(step.fwd.aic)$coef, 3)
+
 ```
+
+```{r}
+fitted = fitted(step.fwd.aic)
+res = residuals(step.fwd.aic)
+
+df_forward = data.frame(Fitted = fitted, Residuals = res)
+
+
+p1 = ggplot(data = df_forward, aes(x = Fitted, y = Residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype="dashed") +
+  labs(x = "Fitted values", y = "Residuals") +
+  geom_smooth(method = "loess", se = FALSE)
+
+p2 = ggplot(df_forward, aes(sample = Residuals)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  labs(title = "Normal Q-Q Plot for Forward Model", x = "Theoretical Quantities", y = "Sample Quantities")
+
+p1+p2
+
+```
+
+
 
 Our resulting model is:
 
 $$
 \widehat{\text{Pct.BF}} = 486.473 - 439.635(\text{Density}) - 0.025(\text{Height}) + 0.014(\text{Weight})
 $$
+
 
 ## Comparing Stepwise Models
 
@@ -262,7 +289,7 @@ exh = lmSubsets(Pct.BF ~ ., data = train, nbest = 15)
 plot(exh)
 ```
 
-## Exhaustive Model: $$\widehat{\text{Pct.BF}} = 4.22 + 0.07(\text{Age}) - 0.04(\text{Weight})  - 0.10(\text{Height}) - 0.63(\text{Neck}) \\- 0.15(\text{Chest}) + 0.96(\text{Abdomen})  - 0.24(\text{Hip}) + 0.30(\text{Thigh}) - 0.21(\text{Knee}) \\+ 0.30(\text{Ankle}) +0.15(\text{Bicep})+ 0.35(\text{Forearm})- 1.37(\text{Wrist})$$
+## Exhaustive Search Continued
 
 ```{r}
 best_exh <- lmSelect(exh, criterion = "AIC")
@@ -353,14 +380,10 @@ p2 <- ggplot(aug, aes(sample = .std.resid)) +
 p1 + p2
 ```
 
-## Key Findings
-
--   Discuss interesting things about the best overall model
-
--   Relate to research question
-
 ## Limitations
 
 -   Include recommendations for future research
+
+## Key Findings
 
 # Thank You
