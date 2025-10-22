@@ -239,6 +239,11 @@ p2
 
 ## Backwards Selection
 
+::::: columns
+::: column
+Backward selection simplified the full model by removing variables with weak statistical significance.\
+The final model keeps **Abdomen, Height, Neck,** and **Wrist**, which have the strongest relationship with body fat percentage.
+
 ```{r}
 step.back.aic = step(M1, 
 					direction = "backward", 
@@ -246,13 +251,44 @@ step.back.aic = step(M1,
 round(summary(step.back.aic)$coef, 3)
 ```
 
-Our resulting model is:
+Our resulting model is: $$\widehat{Pct.BF} = 9.551 - 0.114(Height) - 0.625(Neck) + 0.940(Abdomen) - 1.217(Wrist)$$
+:::
 
-$$\widehat{Pct.BF} = 9.551 - 0.114(Height) - 0.625(Neck) + 0.940(Abdomen) - 1.217(Wrist)$$
+::: column
+```{r}
+library(ggplot2)
+library(broom)
+library(patchwork)
+
+# Prepare data for residual analysis
+
+aug_back <- augment(step.back.aic)
+
+# Residual vs Fitted plot
+
+p1 <- ggplot(aug_back, aes(.fitted, .std.resid)) +
+geom_point(alpha = 0.6) +
+geom_hline(yintercept = 0, color = "red") +
+geom_smooth(method = "loess", se = FALSE, color = "blue") +
+labs(
+title = "Residuals vs Fitted for Backward Selection Model",
+x = "Fitted Values",
+y = "Standardized Residuals"
+) +
+theme_minimal(base_size = 14)
+p1
+```
 
 ```{r}
-model_footer(step.back.aic)
+p2 <- ggplot(aug_back, aes(sample = .std.resid)) +
+stat_qq() +
+stat_qq_line() +
+labs(title = "Q-Q Plot of Residuals for Backward Selection Model") +
+theme_minimal(base_size = 14)
+p2
 ```
+:::
+:::::
 
 ## Forward Selection
 
@@ -463,5 +499,12 @@ p1 + p2
 -   Include recommendations for future research
 
 ## Key Findings
+
+-   The **Forward Stepwise Model** was identified as the best overall model for predicting body fat percentage. It provides interpretable insights into how body characteristics relate to fat distribution.
+
+-   The model indicates that **fat accumulation around the torso (waist)** and **body weight** are the strongest predictors of overall body fat.
+    Individuals with **apple-shaped (central-fat) body types** tend to have higher body fat percentages than those with less central fat distribution.
+
+-   Overall, the findings confirm that body characteristics—especially **weight and waist**—are the dominant factors explaining variations in body fat percentage, more than height or age.
 
 # Thank You
