@@ -380,12 +380,13 @@ The estimated coefficients represent the predicted change in body fat percentage
 
 This suggests that Abdomen size is the strongest predictor of body fat, while Neck has a moderate negative association.
 
-## Abdomen and chest 
+## Abdomen and chest
 
 ```{r}
 lm_bh = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip + Abdomen:Chest, data = train)
 summary(lm_bh)
 ```
+
 ## Assumptions
 
 ```{r}
@@ -402,6 +403,7 @@ ggplot(aug_bh, aes(sample = .std.resid)) +
   stat_qq_line() +
   labs(title = "Q-Q Plot of Residuals")
 ```
+
 ```{r}
 pred_bh = predict(lm_bh, newdata = test)
 RMSE = function(actual, predicted) sqrt(mean((actual - predicted)^2))
@@ -414,9 +416,6 @@ rmse_bh
 summary(lm_bh)
 
 ```
-
-
-
 
 ### **Model Performance**
 

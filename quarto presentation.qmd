@@ -214,7 +214,6 @@ Our resulting model is:
 
 $\widehat{\text{Pct.BF}} = -18.10 + 0.85 \, \text{Abdomen} + 0.02 \, \text{Bicep} - 0.96 \, \text{Neck} - 0.10 \, \text{Thigh}$
 
-
 ## Backwards Selection: $$\widehat{\text{Pct.BF}} = 9.55 + 0.06(\text{Age}) - 0.114(\text{Height})- 0.63(\text{Neck}) -0.15(\text{Chest})+ 0.94(\text{Abdomen}) \\ - 0.27(\text{Hip}) + 0.29(\text{Thigh}) +0.37(\text{Forearm})- 1.22(\text{Wrist})$$
 
 ```{r}
@@ -246,7 +245,6 @@ Our resulting model is:
 $$
 \widehat{\text{Pct.BF}} = 486.473 - 439.635(\text{Density}) - 0.025(\text{Height}) + 0.014(\text{Weight})
 $$
-
 
 ## Comparing Stepwise Models
 
@@ -355,10 +353,14 @@ p2 <- ggplot(aug, aes(sample = .std.resid)) +
 p1 + p2
 ```
 
+## Key Findings
+
+-   Discuss interesting things about the best overall model
+
+-   Relate to research question
+
 ## Limitations
 
 -   Include recommendations for future research
-
-## Key Findings
 
 # Thank You
