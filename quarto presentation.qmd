@@ -148,7 +148,7 @@ lm_bh = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip + Abdomen:Chest, data = train)
 summary(lm_bh)
 ```
 
-## Assumptions
+## Model with Interaction Term (Continued)
 
 ```{r}
 aug_bh = augment(lm_bh)
@@ -192,7 +192,9 @@ rmse_bh_final
 
 ## Multiple Body Sections Model
 
-Examining correlations:
+::::: columns
+::: column
+This model was developed to examine whether a holistic view across different areas of the body can help to produce an accurate prediction of body fat.
 
 ```{r}
 correlations <- cor(bodyfat[, c("Pct.BF", "Abdomen", "Chest", "Waist", "Hip",
@@ -207,13 +209,33 @@ The variables most correlated with body fat percentage from each body section ar
 
 ```{r}
 lm1 <- lm(Pct.BF ~ Abdomen + Bicep + Neck + Thigh, data = train)
-round(summary(lm1)$coef, 3)
+round(summary(lm1)$coef, 2)
 ```
 
-Our resulting model is:
-
 $\widehat{\text{Pct.BF}} = -18.10 + 0.85 \, \text{Abdomen} + 0.02 \, \text{Bicep} - 0.96 \, \text{Neck} - 0.10 \, \text{Thigh}$
+:::
 
+::: column
+```{r}
+aug_mbp = augment(lm1)
+
+p1 <- ggplot(aug_mbp, aes(.fitted, .std.resid)) +
+geom_point(alpha = 0.6) +
+geom_hline(yintercept = 0, color = "red") + 
+labs(x = "Fitted values", y = "Standardized Residuals", title = "Residuals vs Fitted for Abdomen x Chest") +
+geom_smooth(method = "loess", se = FALSE)
+p1
+```
+
+```{r}
+p2 <- ggplot(aug_mbp, aes(sample = .std.resid)) +
+stat_qq() +
+stat_qq_line() +
+labs(title = "Q-Q Plot of Residuals")
+p2
+```
+:::
+:::::
 
 ## Backwards Selection
 
@@ -264,14 +286,11 @@ p1+p2
 
 ```
 
-
-
 Our resulting model is:
 
 $$
 \widehat{\text{Pct.BF}} = 486.473 - 439.635(\text{Density}) - 0.025(\text{Height}) + 0.014(\text{Weight})
 $$
-
 
 ## Comparing Stepwise Models
 
@@ -310,6 +329,8 @@ model_footer(best_model)
 
 ## Comparing All Models
 
+To find the best overall model, all developed models were tested against the remaining 20% of the data set aside. This allowed us to test the models against unseen data.
+
 ```{r}
 y_test <- test$Pct.BF
 
@@ -319,43 +340,100 @@ pred_fwd <- predict(step.fwd.aic, newdata = test)
 pred_back <- predict(step.back.aic, newdata = test)
 pred_exh <- predict(best_model, newdata = test)
 pred_mbp <- predict(lm1, newdata = test)
+pred_bp <- predict(lm_bh, newdata = test)
+
+# Number of predictors for each model
+p_full <- length(coef(M1)) - 1
+p_fwd  <- length(coef(step.fwd.aic)) - 1
+p_back <- length(coef(step.back.aic)) - 1
+p_exh  <- length(coef(best_model)) - 1
+p_mbp  <- length(coef(lm1)) - 1
+p_bp <- length(coef(lm_bh)) - 1
 
 # Helper function
 RMSE <- function(actual, predicted) sqrt(mean((actual - predicted)^2))
 MAE <- function(actual, predicted) mean(abs(actual - predicted))
-R2 <- function(actual, predicted) cor(actual, predicted)^2
+adj_R2 <- function(actual, predicted, p) {
+  n <- length(actual)
+  r2 <- cor(actual, predicted)^2
+  1 - (1 - r2) * (n - 1) / (n - p - 1)
+}
 
 results <- data.frame(
-Model = c("Full Model", "Multiple Body Parts", "Forward Stepwise",
+Model = c("Full Model", "Model with Interactive Term", "Multiple Body Parts", "Forward Stepwise",
 "Backward Stepwise", "Exhaustive (BIC)"),
 RMSE = c(RMSE(y_test, pred_full),
+RMSE(y_test, pred_bp),
 RMSE(y_test, pred_mbp),
 RMSE(y_test, pred_fwd),
 RMSE(y_test, pred_back),
 RMSE(y_test, pred_exh)),
 MAE = c(MAE(y_test, pred_full),
+MAE(y_test, pred_bp),
 MAE(y_test, pred_mbp),
 MAE(y_test, pred_fwd),
 MAE(y_test, pred_back),
 MAE(y_test, pred_exh)),
-R2 = c(R2(y_test, pred_full),
-R2(y_test, pred_mbp),
-R2(y_test, pred_fwd),
-R2(y_test, pred_back),
-R2(y_test, pred_exh))
+R2 = c(adj_R2(y_test, pred_full, p_full),
+adj_R2(y_test, pred_bp, p_bp),
+adj_R2(y_test, pred_mbp, p_mbp),
+adj_R2(y_test, pred_fwd, p_fwd),
+adj_R2(y_test, pred_back, p_back),
+adj_R2(y_test, pred_exh, p_exh))
 )
-results <- results[order(results$RMSE), ]
-rownames(results) <- NULL
-print(results)
+
+library(gt)
+
+results |>
+  rename(`Adj. R^2` = R2) |>
+  gt() |>
+  tab_header(
+    title = "Model Performance Comparison"
+  ) |>
+  fmt_number(columns = c(RMSE, MAE, `Adj. R^2`), decimals = 2)
 ```
+
+It can be seen that the Forward Stepwise model performed the most accurately against this test data, with the lowest Residual Mean Squared of $4.17$ as well as the highest adjusted $R^2$ value of $0.7$
+
+This means that this model predicts body fat percentage at an average of
+
+$$
+\sqrt(4.17) = 2.04\% 
+$$
+
+off the actual data points, which is fairly accurate.
 
 ## Best Overall Model
 
--   List the best model's equation
+::::: columns
+::: column
+Revisiting the Forward Stepwise model:
 
--   Interpret coefficient signs and magnitudes
+```{r}
+round(summary(step.fwd.aic)$coef, 2)
+```
 
--   Discuss statistically significant predictors
+$$
+\widehat{\text{Pct.BF}} = -32.68 + 2.59(\text{Weight}) - 0.98(\text{Wrist}) \\ + 0.25(\text{Bicep}) - 0.51(\text{Neck}) + 0.33(\text{Forearm})
+$$
+
+-   **Waist Coefficient: 2.59**
+
+    As waist circumference increases by 1 cm, body fat increases by \~2.6%, holding other variables constant. This is the largest coefficient, suggesting Waist is the strongest predictor in predicting body fat percentage. It is also highly significant, with a p-value of 0.00.
+:::
+
+::: column
+-   **Weight, Wrist and Neck Coefficients**
+
+    An increase in the circumference of these factors all contribute to a slight decrease in body fat percentage. Counter-intuitive, but this could reflect collinearity with other predictors like waist.
+
+-   **Bicep and Forearm Coefficients**
+
+    A 1cm increase in bicep/forearm circumference is associated with a slight increase in body fat percentage.
+
+Waist and weight can be seen to be statistically significant (\< 0.05). Wrist and Neck are marginally significant (0.05–0.10), which could be significant at lower confidence levels. On the other hand, bicep and forearm are not significant with a very high p-value (\> 0.10).
+:::
+:::::
 
 ## Assumptions of the Model
 
