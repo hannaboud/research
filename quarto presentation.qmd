@@ -1,6 +1,6 @@
 ---
-title: "Modeling Body Fat"
-subtitle: "L01G01"
+title: "Can simple, accessible measures<br>reliably predict body fat %?"
+subtitle: "L07G01 - Modelling Body Fat"
 author: "Lara Burns, Karin Gao, Qiuyu Liu, Bryan Chan and Hanna Boudara"
 format: 
   revealjs:
@@ -25,12 +25,42 @@ library(insight)
 # install.packages("lmSubsets")
 library(lmSubsets)
 library(broom)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(kableExtra)
 theme_set(theme_bw())
 ```
 
-## Motivation and Research Question
+## Why Predict Body Fat %?
 
-Research Question: How do body characteristics affect body fat percentage?
+::: {style="font-size:1.7rem; line-height:1.8"}
+- Accurate health metric 
+- Helps manage risks (cardiovascular disease, diabetes) 
+- Informs targeted fitness decisions 
+:::
+
+::: columns 
+::: {.column width="38%"}
+::: {.callout-tip title="Goal"}
+Use simple body measurements:
+
+- Age
+- Height
+- Weight
+- Circumferences
+
+:::
+:::
+
+::: {.column width="62%"}
+::: {.callout-warning title="However, people usually rely on:"}
+- **Oversimplified indicators** (BMI)
+- **Expensive / inaccessible** tests (DEXA, hydrostatic)
+:::
+
+:::
+:::
 
 ## Data Cleaning and Splitting
 
@@ -301,31 +331,72 @@ sjPlot::tab_model(step.fwd.aic, step.back.aic,
                   dv.labels = c("Forward model", "Backward model"))
 ```
 
-## Exhaustive Search
+## Exhaustive Subset Search (BIC)
 
-```{r}
-exh = lmSubsets(Pct.BF ~ ., data = train, nbest = 15)
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.height=5}
+exh <- lmSubsets(Pct.BF ~ . - Density, data = train, nbest = 15)
 plot(exh)
+
+best_bic <- lmSelect(exh, criterion = "BIC")
+sel_coefs <- coef(best_bic)                 
+selected_vars <- setdiff(names(sel_coefs), "(Intercept)")
+k <- length(selected_vars)
+
+## Refit using exactly those predictors
+best_model <- lm(reformulate(selected_vars, response = "Pct.BF"), data = train)
+
+# quick metrics
+adjR2_train <- summary(best_model)$adj.r.squared
+pred_test   <- predict(best_model, newdata = test)
+rmse_test   <- sqrt(mean((test$Pct.BF - pred_test)^2))
 ```
+::: {.callout-tip title="Takeaway"}
+**BIC minimum at `r k` predictors** → compact model.
 
-## Exhaustive Search Continued
+Selected: `r paste(selected_vars, collapse = ", ")`.
+:::
 
+## Selected Exhaustive Model (BIC)
+::: columns
+::: {.column width="42%"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+tab <- tidy(best_model) |>
+  filter(term != "(Intercept)") |>
+  transmute(Predictor = term,
+            Estimate  = round(estimate, 2),
+            p         = sprintf("%.3f", p.value))
+
+kable(tab, align = "lrr") |>
+  kable_styling(full_width = FALSE, position = "left", font_size = 18)
+```
+:::
+
+::: {.column width="58%"} 
 ```{r}
-best_exh <- lmSelect(exh, criterion = "AIC")
-# Refit chosen model
-best_model <- lm(update(formula(best_exh), . ~ . - Density), data = train)
-round(summary(best_model)$coef, 3)
+aug <- augment(best_model)
+ggplot(aug, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess", se = FALSE) +
+  labs(title = "Residuals vs Fitted",
+       x = "Fitted values", y = "Residuals") +
+  theme_classic(base_size = 12)
 ```
-
-Our resulting model:
-
-$$
-\begin{aligned}\widehat{\text{Pct.BF}} = {} & 484.598- 438.310(\text{Density})+ 0.008(\text{Age})+ 0.016(\text{Weight})- 0.021(\text{Height}) \\& + 0.027(\text{Neck})- 0.003(\text{Chest})- 0.006(\text{Abdomen})+ 0.024(\text{Hip})- 0.001(\text{Thigh}) \\& - 0.048(\text{Knee})+ 0.016(\text{Ankle})- 0.003(\text{Bicep})+ 0.005(\text{Forearm})- 0.098(\text{Wrist})\end{aligned}
-$$
-
+:::
+:::
 ```{r}
-model_footer(best_model)
+coefs <- coef(best_model)
 ```
+
+::: {.callout-note title="Summary"}
+**Resultant Model (BIC)**: $\widehat{\text{Pct.BF}} = -30.32 - 0.23\cdot\text{Weight} +2.47\cdot\text{Waist}-1.2\cdot\text{Wrist}$
+
+- ***Residuals***: Slight S-shape but no severe pattern; spread roughly constant.
+- ***Train adj*** $R^2$: `r sprintf('%.2f', adjR2_train)`.
+- ***Test RMSE***: `r sprintf('%.2f', rmse_test)`.
+:::
 
 ## Comparing All Models
 
