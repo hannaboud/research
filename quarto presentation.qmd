@@ -35,32 +35,30 @@ theme_set(theme_bw())
 ## Why Predict Body Fat %?
 
 ::: {style="font-size:1.7rem; line-height:1.8"}
-- Accurate health metric 
-- Helps manage risks (cardiovascular disease, diabetes) 
-- Informs targeted fitness decisions 
+-   Accurate health metric
+-   Helps manage risks (cardiovascular disease, diabetes)
+-   Informs targeted fitness decisions
 :::
 
-::: columns 
-::: {.column width="38%"}
+::::::: columns
+:::: {.column width="38%"}
 ::: {.callout-tip title="Goal"}
 Use simple body measurements:
 
-- Age
-- Height
-- Weight
-- Circumferences
-
+-   Age
+-   Height
+-   Weight
+-   Circumferences
 :::
-:::
+::::
 
-::: {.column width="62%"}
+:::: {.column width="62%"}
 ::: {.callout-warning title="However, people usually rely on:"}
-- **Oversimplified indicators** (BMI)
-- **Expensive / inaccessible** tests (DEXA, hydrostatic)
+-   **Oversimplified indicators** (BMI)
+-   **Expensive / inaccessible** tests (DEXA, hydrostatic)
 :::
-
-:::
-:::
+::::
+:::::::
 
 ## Data Cleaning and Splitting
 
@@ -386,6 +384,7 @@ adjR2_train <- summary(best_model)$adj.r.squared
 pred_test   <- predict(best_model, newdata = test)
 rmse_test   <- sqrt(mean((test$Pct.BF - pred_test)^2))
 ```
+
 ::: {.callout-tip title="Takeaway"}
 **BIC minimum at `r k` predictors** → compact model.
 
@@ -393,7 +392,8 @@ Selected: `r paste(selected_vars, collapse = ", ")`.
 :::
 
 ## Selected Exhaustive Model (BIC)
-::: columns
+
+::::: columns
 ::: {.column width="42%"}
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -409,7 +409,7 @@ kable(tab, align = "lrr") |>
 ```
 :::
 
-::: {.column width="58%"} 
+::: {.column width="58%"}
 ```{r}
 aug <- augment(best_model)
 ggplot(aug, aes(x = .fitted, y = .resid)) +
@@ -421,7 +421,8 @@ ggplot(aug, aes(x = .fitted, y = .resid)) +
   theme_classic(base_size = 12)
 ```
 :::
-:::
+:::::
+
 ```{r}
 coefs <- coef(best_model)
 ```
@@ -429,9 +430,9 @@ coefs <- coef(best_model)
 ::: {.callout-note title="Summary"}
 **Resultant Model (BIC)**: $\widehat{\text{Pct.BF}} = -30.32 - 0.23\cdot\text{Weight} +2.47\cdot\text{Waist}-1.2\cdot\text{Wrist}$
 
-- ***Residuals***: Slight S-shape but no severe pattern; spread roughly constant.
-- ***Train adj*** $R^2$: `r sprintf('%.2f', adjR2_train)`.
-- ***Test RMSE***: `r sprintf('%.2f', rmse_test)`.
+-   ***Residuals***: Slight S-shape but no severe pattern; spread roughly constant.
+-   ***Train adj*** $R^2$: `r sprintf('%.2f', adjR2_train)`.
+-   ***Test RMSE***: `r sprintf('%.2f', rmse_test)`.
 :::
 
 ## Comparing All Models
@@ -500,12 +501,12 @@ results |>
   fmt_number(columns = c(RMSE, MAE, `Adj. R^2`), decimals = 2)
 ```
 
-It can be seen that the Forward Stepwise model performed the most accurately against this test data, with the lowest Residual Mean Squared of $4.17$ as well as the highest adjusted $R^2$ value of $0.7$
+It can be seen that the Exhaustive search model performed the most accurately against this test data, with the lowest Residual Mean Squared of $4.09$ as well as the highest adjusted $R^2$ value of $0.73$
 
 This means that this model predicts body fat percentage at an average of
 
 $$
-\sqrt(4.17) = 2.04\% 
+\sqrt(4.09) \approx 2\% 
 $$
 
 off the actual data points, which is fairly accurate.
@@ -514,48 +515,47 @@ off the actual data points, which is fairly accurate.
 
 ::::: columns
 ::: column
-Revisiting the Forward Stepwise model:
+Revisiting the Exhaustive model:
 
 ```{r}
-round(summary(step.fwd.aic)$coef, 2)
+round(summary(best_model)$coef, 2)
 ```
 
 $$
-\widehat{\text{Pct.BF}} = -32.68 + 2.59(\text{Weight}) - 0.98(\text{Wrist}) \\ + 0.25(\text{Bicep}) - 0.51(\text{Neck}) + 0.33(\text{Forearm})
+\widehat{\text{Pct.BF}} = -30.32 - 0.23\cdot\text{Weight}\\ +2.47\cdot\text{Waist}-1.2\cdot\text{Wrist}
 $$
 
--   **Waist Coefficient: 2.59**
+-   **Waist Coefficient: 2.47**
 
-    As waist circumference increases by 1 cm, body fat increases by \~2.6%, holding other variables constant. This is the largest coefficient, suggesting Waist is the strongest predictor in predicting body fat percentage. It is also highly significant, with a p-value of 0.00.
+    As waist circumference increases by 1 cm, body fat percentage increases by \~2.5%, holding other variables constant. This is the largest coefficient, suggesting Waist is the strongest predictor in predicting body fat percentage. It is also highly significant, with a p-value of 0.00
 :::
 
 ::: column
--   **Weight, Wrist and Neck Coefficients**
+-   **Weight Coefficient: -0.23**
 
-    An increase in the circumference of these factors all contribute to a slight decrease in body fat percentage. Counter-intuitive, but this could reflect collinearity with other predictors like waist.
+    As weight increases by 1 kg, body fat percentage slightly decreases by -0.23%. This is counter-intuitive, but this could reflect collinearity with other predictors like waist. It is also highly significant, with a p-value of 0.00
 
--   **Bicep and Forearm Coefficients**
+-   **Wrist Coefficient: -1.2**
 
-    A 1cm increase in bicep/forearm circumference is associated with a slight increase in body fat percentage.
-
-Waist and weight can be seen to be statistically significant (\< 0.05). Wrist and Neck are marginally significant (0.05–0.10), which could be significant at lower confidence levels. On the other hand, bicep and forearm are not significant with a very high p-value (\> 0.10).
+    A 1cm increase in wrist circumference is associated with a decrease in body fat percentage by -1.2%. The reasoning for this may be similar to the negative scale of the weight coefficient. The p-value of this coefficient is 0.02, which is less than the critical value 0.05 which indicates a strong and useful predictor.
 :::
 :::::
 
 ## Assumptions of the Model
 
-## Graphing of Residuals + QQ Plot (To be used for best overall model)
-
 ```{r}
 # install.packages("broom")
 library(broom)
 
-aug <- augment(lm1)
+aug <- augment(best_model)
 
-p1 <- ggplot(aug, aes(.fitted, .std.resid)) +
+p1 <- ggplot(aug, aes(x = .fitted, y = .resid)) +
   geom_point(alpha = 0.6) +
-  geom_hline(yintercept = 0, color = "blue") +
-  labs(x = "Fitted", y = "Std. Residual")
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess", se = FALSE) +
+  labs(title = "Residuals vs Fitted",
+       x = "Fitted values", y = "Residuals") +
+  theme_classic(base_size = 12)
 
 p2 <- ggplot(aug, aes(sample = .std.resid)) +
   stat_qq() +
@@ -573,8 +573,7 @@ p1 + p2
 
 -   The **Forward Stepwise Model** was identified as the best overall model for predicting body fat percentage. It provides interpretable insights into how body characteristics relate to fat distribution.
 
--   The model indicates that **fat accumulation around the torso (waist)** and **body weight** are the strongest predictors of overall body fat.
-    Individuals with **apple-shaped (central-fat) body types** tend to have higher body fat percentages than those with less central fat distribution.
+-   The model indicates that **fat accumulation around the torso (waist)** and **body weight** are the strongest predictors of overall body fat. Individuals with **apple-shaped (central-fat) body types** tend to have higher body fat percentages than those with less central fat distribution.
 
 -   Overall, the findings confirm that body characteristics—especially **weight and waist**—are the dominant factors explaining variations in body fat percentage, more than height or age.
 
