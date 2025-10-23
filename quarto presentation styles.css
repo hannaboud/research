@@ -39,3 +39,22 @@
   white-space: nowrap;
   max-width: 100%;
 }
+
+/* Title slide tuning */
+section#title-slide h1.title {
+  font-size: 4.4rem !important;
+  line-height: 1.08;
+  letter-spacing: .2px;
+  margin-bottom: .6rem;
+}
+
+section#title-slide p.subtitle {
+  font-size: 1.6rem !important; 
+  margin: .2rem 0 .6rem;
+}
+
+section#title-slide p.author,
+section#title-slide .quarto-title-authors {
+  font-size: 1.15rem !important;
+  margin-top: .4rem;
+}
