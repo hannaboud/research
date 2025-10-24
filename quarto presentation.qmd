@@ -568,9 +568,25 @@ p2 <- ggplot(aug, aes(sample = .std.resid)) +
 p1 + p2
 ```
 
-## Limitations
+## Limitations of the Final Model
 
--   Include recommendations for future research
+-   **Sample picked:** BIC choice of model may change on new data.
+
+-   **External validity:** Male adults only $\rightarrow$ limited generalisation.
+
+-   **Collinearity:** Weight & Waist (highly correlated) $\rightarrow$ unstable coefficients;  VIFs $<6$
+    
+-  **Assumptions: ** Mild *non-linearity* (S-shape) and *tail-departures* in QQ plot.
+
+::: {.callout-tip title="Future Research"}
+- Broaden sample (include females, all ages, etc)
+- Validate with $k$-fold CV and use regularisation techniques.
+- Increase model flexibility to improve **stability** and **fit**
+  - Splines
+  - Transformations
+  - Interactions
+  
+:::
 
 ## Key Findings
 
