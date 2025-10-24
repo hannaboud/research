@@ -269,8 +269,7 @@ p2
 
 ::::: columns
 ::: column
-Backward selection simplified the full model by removing variables with weak statistical significance.\
-The final model keeps **Abdomen, Height, Neck,** and **Wrist**, which have the strongest relationship with body fat percentage.
+Backward selection simplified the model by removing less significant predictors.
 
 ```{r}
 step.back.aic = step(M1, 
@@ -279,7 +278,11 @@ step.back.aic = step(M1,
 round(summary(step.back.aic)$coef, 3)
 ```
 
-Our resulting model is: $$\widehat{Pct.BF} = 9.551 - 0.114(Height) - 0.625(Neck) + 0.940(Abdomen) - 1.217(Wrist)$$
+-   The model retains Abdomen, Height, Neck, and Wrist, which have the strongest relationships with body fat percentage.
+
+-   Model diagnostics indicate no pattern in residuals, suggesting a good model fit.
+
+$$\widehat{Pct.BF} = 9.551 - 0.114·Height - 0.625·Neck + 0.940·Abdomen - 1.217·Wrist$$
 :::
 
 ::: column
@@ -571,10 +574,10 @@ p1 + p2
 
 ## Key Findings
 
--   The **Forward Stepwise Model** was identified as the best overall model for predicting body fat percentage. It provides interpretable insights into how body characteristics relate to fat distribution.
+-   The **Exhaustive (BIC) Model** indicates that **waist circumference(2.47)**, **body weight(-0.23)**and **wrist circumference(-1.20)** are the strongest predictors of overall body fat.
 
--   The model indicates that **fat accumulation around the torso (waist)** and **body weight** are the strongest predictors of overall body fat. Individuals with **apple-shaped (central-fat) body types** tend to have higher body fat percentages than those with less central fat distribution.
+-   Individuals with **apple-shaped (central-fat) body types** tend to have higher body fat percentages than those with less central fat distribution. Individuals with higher muscle mass or thinner wrists tend to have slightly lower body fat percentages.
 
--   Overall, the findings confirm that body characteristics—especially **weight and waist**—are the dominant factors explaining variations in body fat percentage, more than height or age.
+-   Overall, the findings confirm that body characteristics—especially **waist circumference, body weight and wrist circumference**—are the dominant factors explaining variations in body fat percentage, more than height or age.
 
 # Thank You
