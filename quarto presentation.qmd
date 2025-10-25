@@ -222,23 +222,23 @@ There are 5 assumptions:
 
 - **Linearity:**  
   The relationship between predictors and the outcome should be linear.  
-  *→ We checked this using the residual vs fitted plot, no strong curve, thus linearity holds.*
+  
 
 - **Independence of Errors:**  
   Residuals should all be independent of each other.  
-  *→ Since our data isn’t time-based, we can assume independence is satisfied.*
+  
 
 - **Homoscedasticity:**  
   Residuals should have constant variance across fitted values.  
-  *→ Our residuals don’t fan out, so variance seems stable.*
+
 
 - **Normality of Errors:**  
   Residuals should be approximately normally distributed.  
-  *→ The Q–Q plot shows the points closely follow the diagonal line.*
+ 
 
 - **No Multicollinearity:**  
   Predictors should not be highly correlated with each other.  
-  *→ We checked this earlier.*
+
   
 :::
 
