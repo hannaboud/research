@@ -404,7 +404,7 @@ p1+p2
 Our resulting model is:
 
 $$
-\widehat{\text{Pct.BF}} = 486.473 - 439.635(\text{Density}) - 0.025(\text{Height}) + 0.014(\text{Weight})
+\widehat{\text{Pct.BF}} = 486.473 - 0.025(\text{Height}) + 0.014(\text{Weight})
 $$
 
 ## Comparing Stepwise Models
@@ -616,6 +616,16 @@ p2 <- ggplot(aug, aes(sample = .std.resid)) +
 p1 + p2
 ```
 
+
+## Key Findings
+
+-   The **Exhaustive (BIC) Model** indicates that **waist circumference(2.47)**, **body weight(-0.23)**and **wrist circumference(-1.20)** are the strongest predictors of overall body fat.
+
+-   Individuals with **apple-shaped (central-fat) body types** tend to have higher body fat percentages than those with less central fat distribution. Individuals with higher muscle mass or thinner wrists tend to have slightly lower body fat percentages.
+
+-   Overall, the findings confirm that body characteristics—especially **waist circumference, body weight and wrist circumference**—are the dominant factors explaining variations in body fat percentage, more than height or age.
+
+
 ## Limitations of the Final Model
 
 -   **Sample picked:** BIC choice of model may change on new data.
@@ -635,13 +645,5 @@ p1 + p2
   - Interactions
   
 :::
-
-## Key Findings
-
--   The **Exhaustive (BIC) Model** indicates that **waist circumference(2.47)**, **body weight(-0.23)**and **wrist circumference(-1.20)** are the strongest predictors of overall body fat.
-
--   Individuals with **apple-shaped (central-fat) body types** tend to have higher body fat percentages than those with less central fat distribution. Individuals with higher muscle mass or thinner wrists tend to have slightly lower body fat percentages.
-
--   Overall, the findings confirm that body characteristics—especially **waist circumference, body weight and wrist circumference**—are the dominant factors explaining variations in body fat percentage, more than height or age.
 
 # Thank You
