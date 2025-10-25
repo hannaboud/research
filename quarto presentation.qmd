@@ -155,9 +155,6 @@ model_footer <- function(model) {
 }
 ```
 
-```{r}
-model_footer(M1)
-```
 
 ## Full Linear Model (Continued)
 
@@ -166,6 +163,28 @@ In the full model, majority of predictors are statistically insignificant (with 
 ```{r}
 alias(M1)
 ```
+
+```{r}
+Fitted = fitted(M1)
+Residuals = residuals(M1)
+
+p1 = ggplot(M1, aes(x = Fitted, y = Residuals)) +
+geom_point(color = "black") +
+geom_hline(yintercept = 0, linetype = "dashed") +
+labs(title = "Residual Plot for Full Model",
+x = "Fitted Values",
+y = "Residuals") +
+  geom_smooth(method = "loess", se = FALSE)
+
+p2 = ggplot(M1, aes(sample = Residuals)) +
+  stat_qq(color = "black") +
+  stat_qq_line(color = "red") +
+  labs(title = "QQ Plot of Residuals (Full Model)", 
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles")
+p1+p2
+```
+
 
 This shows that waist and abdomen are nearly perfectly correlated. This would make model predictions unstable, hence we can try different models selection methods.
 
@@ -258,7 +277,7 @@ p1
 ```{r}
 p2 <- ggplot(aug_mbp, aes(sample = .std.resid)) +
 stat_qq() +
-stat_qq_line() +
+stat_qq_line(color = "red") +
 labs(title = "Q-Q Plot of Residuals")
 p2
 ```
@@ -313,7 +332,7 @@ p1
 ```{r}
 p2 <- ggplot(aug_back, aes(sample = .std.resid)) +
 stat_qq() +
-stat_qq_line() +
+stat_qq_line(color = "red") +
 labs(title = "Q-Q Plot of Residuals for Backward Selection Model") +
 theme_minimal(base_size = 14)
 p2
