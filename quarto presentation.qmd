@@ -215,8 +215,10 @@ summary(lm_bh)
 
 
 ## Assumptions for interaction model
-We checked the linear model assumptions using residual diagnostics.
-There are 5 assumptions: 
+::::: columns
+::: {.column width="55%"}
+We checked the linear model assumptions using residual diagnostics.  
+There are 5 assumptions:
 
 - **Linearity:**  
   The relationship between predictors and the outcome should be linear.  
@@ -238,7 +240,12 @@ There are 5 assumptions:
   Predictors should not be highly correlated with each other.  
   *→ We checked this earlier.*
   
-```{r}
+:::
+
+::: {.column width="45%"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=4}
+library(broom)
+
 aug_bh = augment(lm_bh)
 
 p1 <- ggplot(aug_bh, aes(.fitted, .std.resid)) +
