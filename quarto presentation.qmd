@@ -188,14 +188,34 @@ p1+p2
 
 This shows that waist and abdomen are nearly perfectly correlated. This would make model predictions unstable, hence we can try different models selection methods.
 
-## Model with Interaction Term
+## Motivation for Interaction Model
+
+Body fat percentage is influenced by body shape, not just single measurements.  
+- Abdomen circumference is one of the strongest predictors of body fat percentage.  
+- Chest size can moderate how abdominal size relates to body fat — e.g., two people with the same abdomen size but different chest sizes may have different body compositions.  
+- Adding an interaction term (Abdomen × Chest) allows the model to capture this combined effect rather than treating each predictor in isolation.
+
+We tested:
+\[
+\text{Pct.BF} = \beta_0 + \beta_1(\text{Abdomen}) + \beta_2(\text{Waist}) + \beta_3(\text{Chest}) + \beta_4(\text{Hip}) + \beta_5(\text{Abdomen} \times \text{Chest})
+\]
+to explore whether this interaction improves predictive accuracy.
 
 ```{r}
-lm_bh = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip + Abdomen:Chest, data = train)
+ggplot(train, aes(x = Abdomen, y = Pct.BF, color = cut(Chest, breaks = 3))) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Interaction Motivation: Abdomen vs Body Fat by Chest Size",
+       color = "Chest size (binned)") +
+  theme_classic()
 summary(lm_bh)
 ```
 
+```
+
 ## Model with Interaction Term (Continued)
+## Assumptions
+We checked the linear model assumptions using residual diagnostics.
 
 ```{r}
 aug_bh = augment(lm_bh)
@@ -212,6 +232,11 @@ stat_qq_line() +
 labs(title = "Q-Q Plot of Residuals")
 p1 + p2
 ```
+## Model with Interaction Term (Continued)
+
+## RMSE for Interaction Model
+
+We computed RMSE to evaluate prediction accuracy on the test set.
 
 ```{r}
 pred_bh = predict(lm_bh, newdata = test)
