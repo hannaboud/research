@@ -216,6 +216,28 @@ summary(lm_bh)
 
 ## Assumptions for interaction model
 We checked the linear model assumptions using residual diagnostics.
+There are 5 assumptions: 
+
+- **Linearity:**  
+  The relationship between predictors and the outcome should be linear.  
+  *→ We checked this using the residual vs fitted plot, no strong curve, thus linearity holds.*
+
+- **Independence of Errors:**  
+  Residuals should all be independent of each other.  
+  *→ Since our data isn’t time-based, we can assume independence is satisfied.*
+
+- **Homoscedasticity:**  
+  Residuals should have constant variance across fitted values.  
+  *→ Our residuals don’t fan out, so variance seems stable.*
+
+- **Normality of Errors:**  
+  Residuals should be approximately normally distributed.  
+  *→ The Q–Q plot shows the points closely follow the diagonal line.*
+
+- **No Multicollinearity:**  
+  Predictors should not be highly correlated with each other.  
+  *→ We checked this earlier.*
+  
 ```{r}
 aug_bh = augment(lm_bh)
 
@@ -234,49 +256,6 @@ p1 + p2
 
 
 
-## RMSE for Interaction Model
-
-We computed RMSE to evaluate prediction accuracy on the test set.
-
-```{r}
-pred_bh = predict(lm_bh, newdata = test)
-RMSE = function(actual, pred) sqrt(mean((actual - pred)^2))
-rmse_bh = RMSE(test$Pct.BF, pred_bh)
-rmse_bh
-df_rmse_plot <- data.frame(
-Actual = test$Pct.BF,
-Predicted = pred_bh
-)
-ggplot(df_rmse_plot, aes(x = Actual, y = Predicted)) +
-geom_point(color = "steelblue", alpha = 0.6, size = 2) +
-geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
-labs(
-title = "Predicted vs Actual (Interaction Model)",
-subtitle = paste0("RMSE = ", round(rmse_bh, 2), "%"),
-x = "Actual Body Fat (%)",
-y = "Predicted Body Fat (%)"
-) +
-theme_minimal(base_size = 14) +
-coord_equal()
-```
-
-
-```{r}
-lm_bh_noint = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip, data = train)
-anova(lm_bh_noint, lm_bh)  # Likelihood ratio test
-AIC(lm_bh_noint, lm_bh)    # Compare the model selection criteria
-
-```
-
-```{r}
-# Refit without interaction, bc high p-value
-lm_bh_final <- lm(Pct.BF ~ Abdomen + Waist + Chest + Hip, data = train)
-
-# RMSE
-pred_bh_final <- predict(lm_bh_final, newdata = test)
-rmse_bh_final <- RMSE(test$Pct.BF, pred_bh_final)
-rmse_bh_final
-```
 ## Multiple Body Sections Model
 
 ::::: columns
