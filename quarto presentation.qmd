@@ -213,8 +213,8 @@ summary(lm_bh)
 ```
 
 
-## Model with Interaction Term (Continued)
-## Assumptions
+
+## Assumptions for interaction model
 We checked the linear model assumptions using residual diagnostics.
 ```{r}
 aug_bh = augment(lm_bh)
