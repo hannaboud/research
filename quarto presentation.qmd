@@ -208,6 +208,7 @@ ggplot(train, aes(x = Abdomen, y = Pct.BF, color = cut(Chest, breaks = 3))) +
   labs(title = "Interaction Motivation: Abdomen vs Body Fat by Chest Size",
        color = "Chest size (binned)") +
   theme_classic()
+lm_bh <- lm(Pct.BF ~ Abdomen + Waist + Chest + Hip + Abdomen:Chest, data = train)
 summary(lm_bh)
 ```
 
