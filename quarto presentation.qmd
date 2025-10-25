@@ -196,9 +196,9 @@ Body fat percentage is influenced by body shape, not just single measurements.
 - Adding an interaction term (Abdomen × Chest) allows the model to capture this combined effect rather than treating each predictor in isolation.
 
 We tested:
-\[
-\text{Pct.BF} = \beta_0 + \beta_1(\text{Abdomen}) + \beta_2(\text{Waist}) + \beta_3(\text{Chest}) + \beta_4(\text{Hip}) + \beta_5(\text{Abdomen} \times \text{Chest})
-\]
+  \[
+    \text{Pct.BF} = \beta_0 + \beta_1(\text{Abdomen}) + \beta_2(\text{Waist}) + \beta_3(\text{Chest}) + \beta_4(\text{Hip}) + \beta_5(\text{Abdomen} \times \text{Chest})
+    \]
 to explore whether this interaction improves predictive accuracy.
 
 ```{r}
@@ -212,27 +212,27 @@ lm_bh <- lm(Pct.BF ~ Abdomen + Waist + Chest + Hip + Abdomen:Chest, data = train
 summary(lm_bh)
 ```
 
-```
 
 ## Model with Interaction Term (Continued)
 ## Assumptions
 We checked the linear model assumptions using residual diagnostics.
-
 ```{r}
 aug_bh = augment(lm_bh)
 
 p1 <- ggplot(aug_bh, aes(.fitted, .std.resid)) +
-geom_point(alpha = 0.6) +
-geom_hline(yintercept = 0, color = "red") + 
-labs(x = "Fitted values", y = "Standardized Residuals", title = "Residuals vs Fitted for Abdomen x Chest") +
-geom_smooth(method = "loess", se = FALSE)
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, color = "red") + 
+  labs(x = "Fitted values", y = "Standardized Residuals", title = "Residuals vs Fitted for Abdomen x Chest") +
+  geom_smooth(method = "loess", se = FALSE)
 
 p2 <- ggplot(aug_bh, aes(sample = .std.resid)) +
-stat_qq() +
-stat_qq_line() +
-labs(title = "Q-Q Plot of Residuals")
+  stat_qq() +
+  stat_qq_line() +
+  labs(title = "Q-Q Plot of Residuals")
 p1 + p2
 ```
+
+
 ## Model with Interaction Term (Continued)
 
 ## RMSE for Interaction Model
@@ -247,6 +247,7 @@ rmse_bh
 
 ```
 
+
 ```{r}
 lm_bh_noint = lm(Pct.BF ~ Abdomen + Waist + Chest + Hip, data = train)
 anova(lm_bh_noint, lm_bh)  # Likelihood ratio test
@@ -260,9 +261,8 @@ lm_bh_final <- lm(Pct.BF ~ Abdomen + Waist + Chest + Hip, data = train)
 # RMSE
 pred_bh_final <- predict(lm_bh_final, newdata = test)
 rmse_bh_final <- RMSE(test$Pct.BF, pred_bh_final)
-rmse_bh_final
+rmse_b
 ```
-
 ## Multiple Body Sections Model
 
 ::::: columns
@@ -270,6 +270,7 @@ rmse_bh_final
 This model was developed to examine whether a holistic view across different areas of the body can help to produce an accurate prediction of body fat.
 
 ```{r}
+
 correlations <- cor(bodyfat[, c("Pct.BF", "Abdomen", "Chest", "Waist", "Hip",
                                 "Bicep", "Forearm", "Wrist",
                                 "Neck", 
