@@ -261,6 +261,8 @@ p2 <- ggplot(aug_bh, aes(sample = .std.resid)) +
 p1 + p2
 ```
 
+:::
+:::::
 
 
 ## Multiple Body Sections Model
