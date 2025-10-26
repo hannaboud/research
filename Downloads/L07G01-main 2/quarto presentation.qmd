@@ -1,0 +1,652 @@
+---
+title: "Can simple, accessible measures<br>reliably predict body fat %?"
+subtitle: "L07G01 - Modelling Body Fat"
+author: "Lara Burns, Karin Gao, Qiuyu Liu, Bryan Chan and Hanna Boudara"
+format: 
+  revealjs:
+    auto-slide: 20000
+    embed-resources: true
+    transition: slide
+    css: "quarto presentation styles.css"
+---
+
+```{r, message=FALSE}
+library(tidyverse)
+library(readr)
+# install.packages("modelsummary")
+library(modelsummary)
+library(ggcorrplot)
+# install.packages("caTools")
+library(caTools)
+library(car)
+# install.packages("sjPlot")
+library(sjPlot)
+library(insight)
+# install.packages("lmSubsets")
+library(lmSubsets)
+library(broom)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+theme_set(theme_bw())
+```
+
+## Why Predict Body Fat %?
+
+::: {style="font-size:1.7rem; line-height:1.8"}
+-   Accurate health metric
+-   Helps manage risks (cardiovascular disease, diabetes)
+-   Informs targeted fitness decisions
+:::
+
+::::::: columns
+:::: {.column width="38%"}
+::: {.callout-tip title="Goal"}
+Use simple body measurements:
+
+-   Age
+-   Height
+-   Weight
+-   Circumferences
+:::
+::::
+
+:::: {.column width="62%"}
+::: {.callout-warning title="However, people usually rely on:"}
+-   **Oversimplified indicators** (BMI)
+-   **Expensive / inaccessible** tests (DEXA, hydrostatic)
+:::
+::::
+:::::::
+
+## Data Cleaning and Splitting
+
+The original data had no missing values. For the variable `Weight`, which was in pounds, was converted to kilograms and `Height`, which was in inches, to centimeters. After this data cleaning, we had the following data set to build our models upon:
+
+```{r}
+# Read in data and inspect
+bodyfat <- read_tsv("bodyfat.txt") 
+```
+
+```{r}
+bodyfat$Age <- as.integer(bodyfat$Age)
+bodyfat$Weight <- bodyfat$Weight/2.205
+bodyfat$Height <- bodyfat$Height*2.54
+glimpse(bodyfat)
+
+```
+
+Our models were built on 80% of the data set, designated as the training data, and the models' performance was built on the remaining 20% of the data, designated as the test data.
+
+```{r}
+set.seed(71) # Set random seed
+
+split <- sample.split(bodyfat$Pct.BF, SplitRatio = 0.8)
+train <- subset(bodyfat, split == TRUE)
+test <- subset(bodyfat, split == FALSE)
+```
+
+## Exploratory Data Analysis
+
+```{r}
+# install.packages("patchwork")
+library(patchwork)
+
+# Histogram of Body Fat %
+p1 <- ggplot(bodyfat, aes(x = Pct.BF)) +
+  geom_histogram(binwidth = 3, boundary = 0,
+                 fill = "lightblue", color = "white", alpha = 0.9) +
+  labs(title = "Distribution of Body Fat Percentage",
+       x = "Body Fat (%)", y = "Count") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Scatter plots
+vars_to_plot <- c("Density", "Abdomen","Waist","Chest","Hip","Weight","Thigh",
+                  "Neck","Knee","Bicep","Forearm","Wrist","Age","Ankle","Height")
+
+p2 <- bodyfat %>%
+  select(Pct.BF, all_of(vars_to_plot)) %>%
+  pivot_longer(cols = all_of(vars_to_plot),
+               names_to = "variable", values_to = "value") %>%
+  drop_na() %>%
+  ggplot(aes(x = value, y = Pct.BF)) +
+  geom_point(alpha = 0.5, colour = "lightblue", size = 0.9) +
+  geom_smooth(method = "lm", se = TRUE, colour = "red", linewidth = 0.7) +
+  facet_wrap(~ variable, scales = "free_x", ncol = 5) +
+  labs(x = NULL, y = "Body Fat (%)",
+       title = "Relationships between Body Fat % and Predictors") +
+  theme_classic() + 
+  theme(legend.position = "top",
+        strip.text = element_text(size = 10),
+        plot.title = element_text(size = 14, hjust=0.5))
+
+# Combining graphs together
+p1 + p2 + plot_layout(widths = c(1, 2))
+```
+
+## Full Linear Model
+
+```{r}
+M1 = lm(Pct.BF ~.-Density, data=train) # Full Model without density
+round(summary(M1)$coef, 3)
+```
+
+Our resulting model is:
+
+$$\widehat{\text{Pct.BF}} = 484.598 + 0.008(\text{Age})+ 0.016(\text{Weight})- 0.021(\text{Height}) \\+ 0.027(\text{Neck})- 0.003(\text{Chest})- 0.006(\text{Abdomen})+ 0.024(\text{Hip})- 0.001(\text{Thigh}) \\- 0.048(\text{Knee})+ 0.016(\text{Ankle})- 0.003(\text{Bicep})+ 0.005(\text{Forearm})- 0.098(\text{Wrist})$$
+
+```{r}
+# Helper function
+model_footer <- function(model) {
+  s <- summary(model)
+  
+  # Extract p-value from F-statistic
+  p_val <- pf(s$fstatistic[1], s$fstatistic[2], s$fstatistic[3], lower.tail = FALSE)
+  
+  # Print formatted summary
+  cat(
+    sprintf("Residual standard error: %.3f on %d degrees of freedom\n", s$sigma, s$df[2]),
+    sprintf("Multiple R-squared: %.4f, Adjusted R-squared: %.4f\n", s$r.squared, s$adj.r.squared),
+    sprintf("F-statistic: %.1f on %d and %d DF, p-value: %.3g\n",
+            s$fstatistic["value"], s$fstatistic["numdf"], s$fstatistic["dendf"], p_val)
+  )
+}
+```
+
+
+## Full Linear Model (Continued)
+
+In the full model, majority of predictors are statistically insignificant (with `Pr(>|t|)` \> 0.05) and this is potentially due to multi-collinearity between the predictors.
+
+```{r}
+alias(M1)
+```
+
+```{r}
+Fitted = fitted(M1)
+Residuals = residuals(M1)
+
+p1 = ggplot(M1, aes(x = Fitted, y = Residuals)) +
+geom_point(color = "black") +
+geom_hline(yintercept = 0, linetype = "dashed") +
+labs(title = "Residual Plot for Full Model",
+x = "Fitted Values",
+y = "Residuals") +
+  geom_smooth(method = "loess", se = FALSE)
+
+p2 = ggplot(M1, aes(sample = Residuals)) +
+  stat_qq(color = "black") +
+  stat_qq_line(color = "red") +
+  labs(title = "QQ Plot of Residuals (Full Model)", 
+       x = "Theoretical Quantiles",
+       y = "Sample Quantiles")
+p1+p2
+```
+
+
+This shows that waist and abdomen are nearly perfectly correlated. This would make model predictions unstable, hence we can try different models selection methods.
+
+## Motivation for Interaction Model
+
+Body fat percentage is influenced by body shape, not just single measurements.  
+- Abdomen circumference is one of the strongest predictors of body fat percentage.  
+- Chest size can moderate how abdominal size relates to body fat — e.g., two people with the same abdomen size but different chest sizes may have different body compositions.  
+- Adding an interaction term (Abdomen × Chest) allows the model to capture this combined effect rather than treating each predictor in isolation.
+
+We tested:
+  \[
+    \text{Pct.BF} = \beta_0 + \beta_1(\text{Abdomen}) + \beta_2(\text{Waist}) + \beta_3(\text{Chest}) + \beta_4(\text{Hip}) + \beta_5(\text{Abdomen} \times \text{Chest})
+    \]
+to explore whether this interaction improves predictive accuracy.
+
+```{r}
+ggplot(train, aes(x = Abdomen, y = Pct.BF, color = cut(Chest, breaks = 3))) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Interaction Motivation: Abdomen vs Body Fat by Chest Size",
+       color = "Chest size (binned)") +
+  theme_classic()
+lm_bh <- lm(Pct.BF ~ Abdomen + Waist + Chest + Hip + Abdomen:Chest, data = train)
+summary(lm_bh)
+```
+
+
+
+## Assumptions for interaction model
+
+We checked the linear model assumptions using residual diagnostics.  
+
+  
+```{r}
+library(broom)
+
+aug_bh = augment(lm_bh)
+
+p1 <- ggplot(aug_bh, aes(.fitted, .std.resid)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, color = "red") + 
+  labs(x = "Fitted values", y = "Standardized Residuals", title = "Residuals vs Fitted for Abdomen x Chest") +
+  geom_smooth(method = "loess", se = FALSE)
+
+p2 <- ggplot(aug_bh, aes(sample = .std.resid)) +
+  stat_qq() +
+  stat_qq_line() +
+  labs(title = "Q-Q Plot of Residuals")
+p1 + p2
+```
+
+
+
+## Multiple Body Sections Model
+
+::::: columns
+::: column
+This model was developed to examine whether a holistic view across different areas of the body can help to produce an accurate prediction of body fat.
+
+```{r}
+
+correlations <- cor(bodyfat[, c("Pct.BF", "Abdomen", "Chest", "Waist", "Hip",
+                                "Bicep", "Forearm", "Wrist",
+                                "Neck", 
+                                "Thigh", "Knee", "Ankle")], use = "complete.obs")
+
+correlations["Pct.BF", ]
+```
+
+The variables most correlated with body fat percentage from each body section are: `Abdomen` (torso), `Bicep` (arms), `Neck` (neck/head), and `Thigh` (legs). The resulting model using these:
+
+```{r}
+lm1 <- lm(Pct.BF ~ Abdomen + Bicep + Neck + Thigh, data = train)
+round(summary(lm1)$coef, 2)
+```
+
+$\widehat{\text{Pct.BF}} = -18.10 + 0.85 \, \text{Abdomen} + 0.02 \, \text{Bicep} - 0.96 \, \text{Neck} - 0.10 \, \text{Thigh}$
+:::
+
+::: column
+```{r}
+aug_mbp = augment(lm1)
+
+p1 <- ggplot(aug_mbp, aes(.fitted, .std.resid)) +
+geom_point(alpha = 0.6) +
+geom_hline(yintercept = 0, color = "red") + 
+labs(x = "Fitted values", y = "Standardized Residuals", title = "Residuals vs Fitted for Abdomen x Chest") +
+geom_smooth(method = "loess", se = FALSE)
+p1
+```
+
+```{r}
+p2 <- ggplot(aug_mbp, aes(sample = .std.resid)) +
+stat_qq() +
+stat_qq_line(color = "red") +
+labs(title = "Q-Q Plot of Residuals")
+p2
+```
+:::
+:::::
+
+## Backwards Selection
+
+::::: columns
+::: column
+Backward selection simplified the model by removing less significant predictors.
+
+```{r}
+step.back.aic = step(M1, 
+					direction = "backward", 
+					trace = FALSE) 
+round(summary(step.back.aic)$coef, 3)
+```
+
+-   The model retains Abdomen, Height, Neck, and Wrist, which have the strongest relationships with body fat percentage.
+
+-   Model diagnostics indicate no pattern in residuals, suggesting a good model fit.
+
+$$\widehat{Pct.BF} = 9.551 - 0.114·Height - 0.625·Neck + 0.940·Abdomen - 1.217·Wrist$$
+:::
+
+::: column
+```{r}
+library(ggplot2)
+library(broom)
+library(patchwork)
+
+# Prepare data for residual analysis
+
+aug_back <- augment(step.back.aic)
+
+# Residual vs Fitted plot
+
+p1 <- ggplot(aug_back, aes(.fitted, .std.resid)) +
+geom_point(alpha = 0.6) +
+geom_hline(yintercept = 0, color = "red") +
+geom_smooth(method = "loess", se = FALSE, color = "blue") +
+labs(
+title = "Residuals vs Fitted for Backward Selection Model",
+x = "Fitted Values",
+y = "Standardized Residuals"
+) +
+theme_minimal(base_size = 14)
+p1
+```
+
+```{r}
+p2 <- ggplot(aug_back, aes(sample = .std.resid)) +
+stat_qq() +
+stat_qq_line(color = "red") +
+labs(title = "Q-Q Plot of Residuals for Backward Selection Model") +
+theme_minimal(base_size = 14)
+p2
+```
+:::
+:::::
+
+## Forward Selection
+
+```{r}
+M0 = lm(Pct.BF ~ 1, data=train) # Null model
+step.fwd.aic = step(M0, scope = list(lower = M0, upper = M1),
+                    direction = "forward", trace = FALSE)
+round(summary(step.fwd.aic)$coef, 3)
+
+```
+
+```{r}
+fitted = fitted(step.fwd.aic)
+res = residuals(step.fwd.aic)
+
+df_forward = data.frame(Fitted = fitted, Residuals = res)
+
+
+p1 = ggplot(data = df_forward, aes(x = Fitted, y = Residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype="dashed") +
+  labs(x = "Fitted values", y = "Residuals") +
+  geom_smooth(method = "loess", se = FALSE)
+
+p2 = ggplot(df_forward, aes(sample = Residuals)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  labs(title = "Normal Q-Q Plot for Forward Model", x = "Theoretical Quantities", y = "Sample Quantities")
+
+p1+p2
+
+```
+
+Our resulting model is:
+
+$$
+\widehat{\text{Pct.BF}} = -32.68 - 2.587(\text{Waist}) - 0.283(\text{Weight}) - 0.983(\text{Wrist})
+$$
+
+## Comparing Stepwise Models
+
+```{r}
+sjPlot::tab_model(step.fwd.aic, step.back.aic, 
+                  show.ci = FALSE, 
+                  show.aic = TRUE,
+                  dv.labels = c("Forward model", "Backward model"))
+```
+
+## Exhaustive Subset Search (BIC)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.height=5}
+exh <- lmSubsets(Pct.BF ~ . - Density, data = train, nbest = 15)
+plot(exh)
+
+best_bic <- lmSelect(exh, criterion = "BIC")
+sel_coefs <- coef(best_bic)                 
+selected_vars <- setdiff(names(sel_coefs), "(Intercept)")
+k <- length(selected_vars)
+
+## Refit using exactly those predictors
+best_model <- lm(reformulate(selected_vars, response = "Pct.BF"), data = train)
+
+# quick metrics
+adjR2_train <- summary(best_model)$adj.r.squared
+pred_test   <- predict(best_model, newdata = test)
+rmse_test   <- sqrt(mean((test$Pct.BF - pred_test)^2))
+```
+
+::: {.callout-tip title="Takeaway"}
+**BIC minimum at `r k` predictors** → compact model.
+
+Selected: `r paste(selected_vars, collapse = ", ")`.
+:::
+
+## Selected Exhaustive Model (BIC)
+
+::::: columns
+::: {.column width="42%"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+tab <- tidy(best_model) |>
+  filter(term != "(Intercept)") |>
+  transmute(Predictor = term,
+            Estimate  = round(estimate, 2),
+            p         = sprintf("%.3f", p.value))
+
+kable(tab, align = "lrr") |>
+  kable_styling(full_width = FALSE, position = "left", font_size = 18)
+```
+:::
+
+::: {.column width="58%"}
+```{r}
+aug <- augment(best_model)
+ggplot(aug, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess", se = FALSE) +
+  labs(title = "Residuals vs Fitted",
+       x = "Fitted values", y = "Residuals") +
+  theme_classic(base_size = 12)
+```
+:::
+:::::
+
+```{r}
+coefs <- coef(best_model)
+```
+
+::: {.callout-note title="Summary"}
+**Resultant Model (BIC)**: $\widehat{\text{Pct.BF}} = -30.32 - 0.23\cdot\text{Weight} +2.47\cdot\text{Waist}-1.2\cdot\text{Wrist}$
+
+-   ***Residuals***: Slight S-shape but no severe pattern; spread roughly constant.
+-   ***Train adj*** $R^2$: `r sprintf('%.2f', adjR2_train)`.
+-   ***Test RMSE***: `r sprintf('%.2f', rmse_test)`.
+:::
+
+## Comparing All Models
+
+To find the best overall model, all developed models were tested against the remaining 20% of the data set aside. This allowed us to test the models against unseen data.
+
+```{r}
+y_test <- test$Pct.BF
+
+# Predictions on test set
+pred_full <- predict(M1, newdata = test)
+pred_fwd <- predict(step.fwd.aic, newdata = test)
+pred_back <- predict(step.back.aic, newdata = test)
+pred_exh <- predict(best_model, newdata = test)
+pred_mbp <- predict(lm1, newdata = test)
+pred_bp <- predict(lm_bh, newdata = test)
+
+# Number of predictors for each model
+p_full <- length(coef(M1)) - 1
+p_fwd  <- length(coef(step.fwd.aic)) - 1
+p_back <- length(coef(step.back.aic)) - 1
+p_exh  <- length(coef(best_model)) - 1
+p_mbp  <- length(coef(lm1)) - 1
+p_bp <- length(coef(lm_bh)) - 1
+
+# Helper function
+RMSE <- function(actual, predicted) sqrt(mean((actual - predicted)^2))
+MAE <- function(actual, predicted) mean(abs(actual - predicted))
+adj_R2 <- function(actual, predicted, p) {
+  n <- length(actual)
+  r2 <- cor(actual, predicted)^2
+  1 - (1 - r2) * (n - 1) / (n - p - 1)
+}
+
+results <- data.frame(
+Model = c("Full Model", "Model with Interactive Term", "Multiple Body Parts", "Forward Stepwise",
+"Backward Stepwise", "Exhaustive (BIC)"),
+RMSE = c(RMSE(y_test, pred_full),
+RMSE(y_test, pred_bp),
+RMSE(y_test, pred_mbp),
+RMSE(y_test, pred_fwd),
+RMSE(y_test, pred_back),
+RMSE(y_test, pred_exh)),
+MAE = c(MAE(y_test, pred_full),
+MAE(y_test, pred_bp),
+MAE(y_test, pred_mbp),
+MAE(y_test, pred_fwd),
+MAE(y_test, pred_back),
+MAE(y_test, pred_exh)),
+R2 = c(adj_R2(y_test, pred_full, p_full),
+adj_R2(y_test, pred_bp, p_bp),
+adj_R2(y_test, pred_mbp, p_mbp),
+adj_R2(y_test, pred_fwd, p_fwd),
+adj_R2(y_test, pred_back, p_back),
+adj_R2(y_test, pred_exh, p_exh))
+)
+
+library(gt)
+
+results |>
+  rename(`Adj. R^2` = R2) |>
+  gt() |>
+  tab_header(
+    title = "Model Performance Comparison"
+  ) |>
+  fmt_number(columns = c(RMSE, MAE, `Adj. R^2`), decimals = 2)
+```
+
+It can be seen that the Exhaustive search model performed the most accurately against this test data, with the lowest Residual Mean Squared of $4.09$ as well as the highest adjusted $R^2$ value of $0.73$
+
+This means that this model predicts body fat percentage at an average of
+
+$$
+\sqrt(4.09) \approx 2\% 
+$$
+
+off the actual data points, which is fairly accurate.
+
+## Best Overall Model
+
+::::: columns
+::: column
+Revisiting the Exhaustive model:
+
+```{r}
+round(summary(best_model)$coef, 2)
+```
+
+$$
+\widehat{\text{Pct.BF}} = -30.32 - 0.23\cdot\text{Weight}\\ +2.47\cdot\text{Waist}-1.2\cdot\text{Wrist}
+$$
+
+-   **Waist Coefficient: 2.47**
+
+    As waist circumference increases by 1 cm, body fat percentage increases by \~2.5%, holding other variables constant. This is the largest coefficient, suggesting Waist is the strongest predictor in predicting body fat percentage. It is also highly significant, with a p-value of 0.00
+:::
+
+::: column
+-   **Weight Coefficient: -0.23**
+
+    As weight increases by 1 kg, body fat percentage slightly decreases by -0.23%. This is counter-intuitive, but this could reflect collinearity with other predictors like waist. It is also highly significant, with a p-value of 0.00
+
+-   **Wrist Coefficient: -1.2**
+
+    A 1cm increase in wrist circumference is associated with a decrease in body fat percentage by -1.2%. The reasoning for this may be similar to the negative scale of the weight coefficient. The p-value of this coefficient is 0.02, which is less than the critical value 0.05 which indicates a strong and useful predictor.
+:::
+:::::
+
+## Assumptions of the Model
+::::: columns
+::: {.column width="55%"}
+We checked the linear model assumptions using residual diagnostics.  
+There are 5 assumptions:
+
+- **Linearity:**  
+  The relationship between predictors and the outcome should be linear.  
+  
+
+- **Independence of Errors:**  
+  Residuals should all be independent of each other.  
+  
+
+- **Homoscedasticity:**  
+  Residuals should have constant variance across fitted values.  
+
+
+- **Normality of Errors:**  
+  Residuals should be approximately normally distributed.  
+ 
+
+- **No Multicollinearity:**  
+  Predictors should not be highly correlated with each other.  
+
+  
+:::
+
+::: {.column width="45%"}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=4}
+
+# install.packages("broom")
+library(broom)
+
+aug <- augment(best_model)
+
+p1 <- ggplot(aug, aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "loess", se = FALSE) +
+  labs(title = "Residuals vs Fitted",
+       x = "Fitted values", y = "Residuals") +
+  theme_classic(base_size = 12)
+
+p2 <- ggplot(aug, aes(sample = .std.resid)) +
+  stat_qq() +
+  stat_qq_line()
+
+# Combine plots side by side
+p1 + p2
+```
+:::
+:::::
+
+## Key Findings
+
+-   The **Exhaustive (BIC) Model** indicates that **waist circumference(2.47)**, **body weight(-0.23)**and **wrist circumference(-1.20)** are the strongest predictors of overall body fat.
+
+-   Individuals with **apple-shaped (central-fat) body types** tend to have higher body fat percentages than those with less central fat distribution. Individuals with higher muscle mass or thinner wrists tend to have slightly lower body fat percentages.
+
+-   Overall, the findings confirm that body characteristics—especially **waist circumference, body weight and wrist circumference**—are the dominant factors explaining variations in body fat percentage, more than height or age.
+
+
+## Limitations of the Final Model
+
+-   **Sample picked:** BIC choice of model may change on new data.
+
+-   **External validity:** Male adults only $\rightarrow$ limited generalisation.
+
+-   **Collinearity:** Weight & Waist (highly correlated) $\rightarrow$ unstable coefficients;  VIFs $<6$
+    
+-  **Assumptions: ** Mild *non-linearity* (S-shape) and *tail-departures* in QQ plot.
+
+::: {.callout-tip title="Future Research"}
+- Broaden sample (include females, all ages, etc)
+- Validate with $k$-fold CV and use regularisation techniques.
+- Increase model flexibility to improve **stability** and **fit**
+  - Splines
+  - Transformations
+  - Interactions
+  
+:::
+
+# Thank You
