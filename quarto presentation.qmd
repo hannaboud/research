@@ -404,7 +404,7 @@ p1+p2
 Our resulting model is:
 
 $$
-\widehat{\text{Pct.BF}} = 486.473 - 0.025(\text{Height}) + 0.014(\text{Weight})
+\widehat{\text{Pct.BF}} = -32.68 - 2.587(\text{Waist}) - 0.283(\text{Weight}) - 0.983(\text{Wrist})
 $$
 
 ## Comparing Stepwise Models
