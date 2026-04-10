@@ -1,0 +1,30 @@
+ticker,delta_PPI,p_value,significant,r2,n_obs,market_cap_usd,Security,tier,GICS Sub-Industry
+NVDA.O,-0.183325,0.3015,False,0.6959,118,4070736000000.0,Nvidia,high,Semiconductors
+AAPL.O,-0.012611,0.9118,False,0.5994,118,3658032506400.0,Apple Inc.,high,"Technology Hardware, Storage & Peripherals"
+GOOG.O,0.104578,0.2983,False,0.6573,118,3315536940000.0,Alphabet Inc. (Class C),high,Interactive Media & Services
+GOOGL.O,0.109479,0.2749,False,0.6656,118,3315536940000.0,Alphabet Inc. (Class A),high,Interactive Media & Services
+AVGO.O,-0.374329,0.0265,True,0.4542,118,1423620029565.12,Broadcom,high,Semiconductors
+TSLA.O,0.42027,0.1771,False,0.3594,118,1357742464770.72,"Tesla, Inc.",high,Automobile Manufacturers
+MU.O,0.277233,0.255,False,0.3728,118,402849157698.22,Micron Technology,high,Semiconductors
+AMD.O,-0.375231,0.1796,False,0.4608,118,329312129970.21,Advanced Micro Devices,high,Semiconductors
+AMAT.O,0.148712,0.4607,False,0.4562,118,267581438856.39,Applied Materials,high,Semiconductor Materials & Equipment
+LRCX.O,0.04979,0.7822,False,0.5091,118,264002677110.0,Lam Research,high,Semiconductor Materials & Equipment
+INTC.O,0.182388,0.3941,False,0.2547,118,216556171133.64,Intel,high,Semiconductors
+KLAC.O,-0.039745,0.7938,False,0.5101,118,189171075761.31,KLA Corporation,high,Semiconductor Materials & Equipment
+TXN.O,-0.095429,0.4593,False,0.4255,118,173288494544.41,Texas Instruments,high,Semiconductors
+ADI.O,0.077114,0.5905,False,0.3906,118,150093486028.08,Analog Devices,high,Semiconductors
+QCOM.O,0.078852,0.6719,False,0.35,118,135626370000.0,Qualcomm,high,Semiconductors
+RTX.N,-0.125736,0.4234,False,0.2198,118,255344769276.2,RTX Corporation,high,Aerospace & Defense
+BA.N,-0.220952,0.3576,False,0.1833,118,149719025552.8,Boeing,high,Aerospace & Defense
+LMT.N,-0.047646,0.7634,False,0.1033,118,141927790749.12,Lockheed Martin,high,Aerospace & Defense
+NOC.N,0.01156,0.9423,False,0.052,118,96364780659.0,Northrop Grumman,high,Aerospace & Defense
+GD.N,0.040184,0.7648,False,0.1762,118,93918511107.12,General Dynamics,high,Aerospace & Defense
+CAT.N,0.022249,0.8991,False,0.2718,118,323560810672.8,Caterpillar Inc.,high,Construction Machinery & Heavy Transportation Equipment
+GE.N,0.093823,0.6379,False,0.2792,118,295488259741.62,GE Aerospace,high,Aerospace & Defense
+ETN.N,-0.158739,0.2193,False,0.4083,118,138650441102.4,Eaton Corporation,high,Electrical Components & Equipment
+PH.N,-0.036258,0.8236,False,0.3731,118,112135813024.76,Parker Hannifin,high,Industrial Machinery & Supplies & Components
+HWM.N,-0.126955,0.6202,False,0.1508,118,91374240357.7,Howmet Aerospace,high,Aerospace & Defense
+FCX.N,0.049972,0.8599,False,0.2016,118,80828218321.44,Freeport-McMoRan,high,Copper
+WDC.O,0.386769,0.1122,False,0.3909,118,93350701443.48,Western Digital,high,"Technology Hardware, Storage & Peripherals"
+STX.O,0.288261,0.1792,False,0.3302,118,85145324656.32,Seagate Technology,high,"Technology Hardware, Storage & Peripherals"
+HON.O,-0.220547,0.0957,False,0.2885,118,,,,

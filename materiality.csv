@@ -1,0 +1,10 @@
+ticker,year,materiality,include_in_study,reasoning,sector
+TSLA,2018,unknown,False,Error: Expecting value: line 1 column 1 (char 0),unknown
+TSLA,2019,unknown,False,Error: Expecting value: line 1 column 1 (char 0),unknown
+TSLA,2020,unknown,False,Error: Expecting value: line 1 column 1 (char 0),unknown
+TSLA,2021,unknown,False,Error: Expecting value: line 1 column 1 (char 0),unknown
+TSLA,2022,unknown,False,Error: Expecting value: line 1 column 1 (char 0),unknown
+TSLA,2023,unknown,False,Error: Expecting value: line 1 column 1 (char 0),unknown
+TSLA,2024,unknown,False,Error: Expecting value: line 1 column 1 (char 0),unknown
+TSLA,2025,unknown,False,Error: Expecting value: line 1 column 1 (char 0),unknown
+TSLA,2026,unknown,False,Error: Expecting value: line 1 column 1 (char 0),unknown
