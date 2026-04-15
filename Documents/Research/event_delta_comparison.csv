@@ -1,0 +1,30 @@
+ticker,delta_CSI,sig_CSI,r2_CSI,delta_MVREMXTR,sig_MVREMXTR,r2_MVREMXTR,Security,tier,same_sign
+AAPL.O,-0.025209,False,0.5001,-0.036809,False,0.5451,Apple Inc.,high,True
+ADI.O,0.018904,False,0.4539,0.118445,True,0.5261,Analog Devices,high,True
+AMAT.O,-0.006224,False,0.4919,0.083145,True,0.5685,Applied Materials,high,False
+AMD.O,0.002385,False,0.4721,0.027379,False,0.5142,Advanced Micro Devices,high,True
+AVGO.O,-0.00308,False,0.5546,0.036715,False,0.5325,Broadcom,high,False
+BA.N,0.006552,False,0.1593,0.1683,True,0.2087,Boeing,high,True
+CAT.N,0.054672,False,0.1908,0.229059,True,0.2796,Caterpillar Inc.,high,True
+ETN.N,0.039469,False,0.3027,0.173832,True,0.3354,Eaton Corporation,high,True
+FCX.N,0.086569,True,0.2201,0.256225,True,0.3382,Freeport-McMoRan,high,True
+GD.N,0.020741,False,0.1017,0.147479,True,0.153,General Dynamics,high,True
+GE.N,0.006724,False,0.1449,0.156463,True,0.1937,GE Aerospace,high,True
+GOOG.O,-0.050796,True,0.6167,-0.048473,True,0.593,Alphabet Inc. (Class C),high,True
+GOOGL.O,-0.051208,True,0.6237,-0.050172,True,0.6019,Alphabet Inc. (Class A),high,True
+HON.O,-0.003317,False,0.1765,0.144383,True,0.2538,,,False
+HWM.N,0.007423,False,0.2017,0.138097,True,0.2598,Howmet Aerospace,high,True
+INTC.O,0.03119,False,0.2399,0.099535,True,0.2746,Intel,high,True
+KLAC.O,0.004378,False,0.4613,0.072878,True,0.5333,KLA Corporation,high,True
+LMT.N,0.036355,False,0.0487,0.080338,True,0.0672,Lockheed Martin,high,True
+LRCX.O,-0.014123,False,0.49,0.05689,True,0.5427,Lam Research,high,False
+MU.O,0.005505,False,0.4387,0.072403,True,0.4469,Micron Technology,high,True
+NOC.N,0.034649,False,0.0297,0.085437,True,0.0362,Northrop Grumman,high,True
+NVDA.O,0.02989,False,0.6866,-0.006007,False,0.6929,Nvidia,high,False
+PH.N,0.033297,False,0.2894,0.158772,True,0.3167,Parker Hannifin,high,True
+QCOM.O,0.009132,False,0.43,0.05789,True,0.4827,Qualcomm,high,True
+RTX.N,0.004774,False,0.1646,0.105162,True,0.1573,RTX Corporation,high,True
+STX.O,0.065979,True,0.2432,0.132106,True,0.2329,Seagate Technology,high,True
+TSLA.O,0.009046,False,0.3157,0.033186,False,0.324,"Tesla, Inc.",high,True
+TXN.O,0.016715,False,0.3897,0.084989,True,0.4564,Texas Instruments,high,True
+WDC.O,0.011886,False,0.3125,0.121499,True,0.2828,Western Digital,high,True
