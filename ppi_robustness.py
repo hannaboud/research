@@ -1,4 +1,4 @@
-"""
+""""
 China RE PPI — Monthly OLS Robustness Check
 =============================================
 Uses the China Industrial ex-factory PPI for rare earth metal
@@ -123,12 +123,16 @@ market_monthly = monthly_returns["MARKET"]
 # Extract stock returns
 stock_monthly = monthly_returns[TICKERS]
 
+# Shift PPI by 1 month to account for publication lag
+# February PPI published mid-March — so align to next month's stock returns
+ppi_lagged = ppi_returns.shift(1)
+
 # Align all series to common dates
-common = (ppi_returns.index
+common = (ppi_lagged.index
           .intersection(market_monthly.index)
           .intersection(stock_monthly.index))
 
-ppi_aligned     = ppi_returns.loc[common]
+ppi_aligned = ppi_lagged.loc[common].dropna()
 market_aligned  = market_monthly.loc[common]
 stock_aligned   = stock_monthly.loc[common]
 
