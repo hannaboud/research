@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import warnings
 import lseg.data as ld
+import time
 
 warnings.filterwarnings('ignore')
 
@@ -69,14 +70,40 @@ ppi_prices = ppi_raw.select_dtypes(include=[np.number]).iloc[:, 0].dropna()
 ppi_returns = np.log(ppi_prices / ppi_prices.shift(1)).dropna()
 ppi_returns.name = "PPI_RE"
 
-# Stocks + Market
-print(f"Fetching {len(TICKERS)} stocks + IVV...")
+# ======================= OPTIMIZED PRICE FETCH =======================
+
 all_universe = TICKERS + ["IVV"]
-prices_daily = ld.get_history(all_universe, fields=["TRDPRC_1"],
-                              interval="daily",
-                              start=START_DATE, end=END_DATE,
-                              adjustments=["exchangeCorrection",
-                                           "manualCorrection"])
+print(f"Fetching daily prices for {len(all_universe)} instruments...")
+
+# Split into smaller batches to avoid timeout / throttling
+batch_size = 100
+prices_list = []
+
+for i in range(0, len(all_universe), batch_size):
+    batch = all_universe[i:i + batch_size]
+    print(
+        f"  Fetching batch {i // batch_size + 1} / {len(all_universe) // batch_size + 1} ({len(batch)} tickers)")
+
+    try:
+        df = ld.get_history(
+            universe=batch,
+            fields=["TRDPRC_1"],
+            interval="daily",
+            start=START_DATE,
+            end=END_DATE,
+            adjustments=["exchangeCorrection", "manualCorrection"]
+        )
+        prices_list.append(df)
+        # Small pause to be nice to the API
+        time.sleep(0.8)
+    except Exception as e:
+        print(f"    Error on batch: {e}")
+        time.sleep(2)
+
+# Combine all batches
+prices_daily = pd.concat(prices_list, axis=1) if prices_list else pd.DataFrame()
+
+print(f"Downloaded price data shape: {prices_daily.shape}")
 
 monthly_returns = np.log(
     prices_daily.resample("ME").last() / prices_daily.resample(
