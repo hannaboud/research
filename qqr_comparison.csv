@@ -1,0 +1,30 @@
+ticker,MV_worst_full,MV_worst_shock,MV_med_full,CSI_worst_full,CSI_worst_shock,CSI_med_full,Security,tier,sign_agree_shock
+AAPL.O,0.7773,2.3142,-0.0152,1.0354,-0.4734,-0.2652,Apple Inc.,high,False
+ADI.O,0.3799,1.9575,-0.0064,0.5999,-0.1528,-0.0504,Analog Devices,high,False
+AMAT.O,0.4941,1.5729,-0.0443,-1.2474,1.4967,-0.0456,Applied Materials,high,True
+AMD.O,-0.611,0.6344,0.1225,0.7145,0.4044,-0.4284,Advanced Micro Devices,high,True
+AVGO.O,1.7971,2.7645,0.0593,-0.1681,-0.1089,0.3006,Broadcom,high,False
+BA.N,0.5514,1.1347,0.6822,-1.1117,1.4768,-0.3448,Boeing,high,True
+CAT.N,1.0868,1.2735,0.4827,-1.3508,0.0255,0.398,Caterpillar Inc.,high,True
+ETN.N,-0.3625,0.3607,0.1716,-1.1001,-0.5998,-0.1955,Eaton Corporation,high,False
+FCX.N,0.8031,-1.639,0.4499,0.2458,-0.2453,-0.1084,Freeport-McMoRan,high,True
+GD.N,-1.2058,-2.3163,-0.5697,1.0516,-1.2884,-0.5293,General Dynamics,high,True
+GE.N,0.179,2.3813,0.2972,-3.6055,0.7792,-0.0242,GE Aerospace,high,True
+GOOG.O,0.1941,0.1675,-0.2079,0.4401,1.9454,-0.4485,Alphabet Inc. (Class C),high,True
+GOOGL.O,0.4216,0.0207,-0.2138,0.0101,2.2526,-0.2054,Alphabet Inc. (Class A),high,True
+HON.O,0.0147,0.8445,-0.1374,-0.531,-1.9985,0.2669,,,False
+HWM.N,-0.4513,-2.1726,0.1215,-0.2755,-0.0574,0.0666,Howmet Aerospace,high,True
+INTC.O,1.2855,1.9704,0.175,-1.0332,-0.5475,-0.1461,Intel,high,False
+KLAC.O,0.6799,3.3942,-0.0514,-1.2135,1.9041,0.2743,KLA Corporation,high,True
+LMT.N,0.1582,-0.9181,-0.2777,-0.4279,1.9305,-0.4404,Lockheed Martin,high,False
+LRCX.O,0.8694,0.7741,0.0192,-0.1457,-0.0424,-0.1223,Lam Research,high,False
+MU.O,-0.1446,0.6485,-0.4019,0.8529,-0.1607,-0.0729,Micron Technology,high,False
+NOC.N,-1.7536,-5.792,-0.256,-4.582,0.1565,-0.5296,Northrop Grumman,high,False
+NVDA.O,-0.5408,2.0783,-0.1156,-0.8451,-0.5198,-0.0175,Nvidia,high,False
+PH.N,-0.4729,0.3823,0.1818,-0.2658,0.3651,0.196,Parker Hannifin,high,True
+QCOM.O,0.8041,2.2147,-0.0943,0.9603,0.8459,0.2323,Qualcomm,high,True
+RTX.N,-3.5042,-1.2162,0.2692,-0.5244,0.5763,-0.0412,RTX Corporation,high,False
+STX.O,-0.9359,-1.1942,0.2323,-0.4624,-1.0814,-0.0861,Seagate Technology,high,True
+TSLA.O,1.0524,1.4617,-0.047,-1.5784,1.9895,-0.1021,"Tesla, Inc.",high,True
+TXN.O,1.9338,1.3782,-0.0014,0.2522,-0.3307,0.2667,Texas Instruments,high,False
+WDC.O,-1.2405,-0.72,-0.0163,-1.0929,0.6009,0.2149,Western Digital,high,False

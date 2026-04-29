@@ -1,0 +1,165 @@
+Symbol,Security,GICS Sector,GICS Sub-Industry,Headquarters Location,Date added,CIK,Founded,tier
+AMD,Advanced Micro Devices,Information Technology,Semiconductors,"Santa Clara, California",2017-03-20,2488,1969,high
+ALB,Albemarle Corporation,Materials,Specialty Chemicals,"Charlotte, North Carolina",2016-07-01,915913,1994,high
+AME,Ametek,Industrials,Electrical Components & Equipment,"Berwyn, Pennsylvania",2013-09-23,1037868,1930,high
+APH,Amphenol,Information Technology,Electronic Components,"Wallingford, Connecticut",2008-09-30,820313,1932,high
+ADI,Analog Devices,Information Technology,Semiconductors,"Wilmington, Massachusetts",1999-10-12,6281,1965,high
+AAPL,Apple Inc.,Information Technology,"Technology Hardware, Storage & Peripherals","Cupertino, California",1982-11-30,320193,1977,high
+AMAT,Applied Materials,Information Technology,Semiconductor Materials & Equipment,"Santa Clara, California",1995-03-16,6951,1967,high
+APTV,Aptiv,Consumer Discretionary,Automotive Parts & Equipment,"Schaffhausen, Switzerland",2012-12-24,1521332,1994,high
+AXON,Axon Enterprise,Industrials,Aerospace & Defense,"Scottsdale, Arizona",2023-05-04,1069183,1993,high
+BA,Boeing,Industrials,Aerospace & Defense,"Arlington, Virginia",1957-03-04,12927,1916,high
+AVGO,Broadcom,Information Technology,Semiconductors,"Palo Alto, California",2014-05-08,1730168,1961,high
+CAT,Caterpillar Inc.,Industrials,Construction Machinery & Heavy Transportation Equipment,"Irving, Texas",1957-03-04,18230,1925,high
+COHR,Coherent Corp.,Information Technology,Electronic Components,"Saxonburg, Pennsylvania",2026-03-23,820318,1971,high
+GLW,Corning Inc.,Information Technology,Electronic Components,"Corning, New York",1995-02-27,24741,1851,high
+CMI,Cummins,Industrials,Construction Machinery & Heavy Transportation Equipment,"Columbus, Indiana",1965-03-31,26172,1919,high
+DELL,Dell Technologies,Information Technology,"Technology Hardware, Storage & Peripherals","Round Rock, Texas",2024-09-23,1571996,2016,high
+DOV,Dover Corporation,Industrials,Industrial Machinery & Supplies & Components,"Downers Grove, Illinois",1985-10-31,29905,1955,high
+DD,DuPont,Materials,Specialty Chemicals,"Wilmington, Delaware",2019-06-03,1666700,2017 (1802),high
+ETN,Eaton Corporation,Industrials,Electrical Components & Equipment,"Dublin, Ireland",1957-03-04,1551182,1911,high
+ECL,Ecolab,Materials,Specialty Chemicals,"Saint Paul, Minnesota",1989-01-31,31462,1923,high
+EMR,Emerson Electric,Industrials,Electrical Components & Equipment,"Ferguson, Missouri",1965-03-31,32604,1890,high
+FSLR,First Solar,Information Technology,Semiconductors,"Tempe, Arizona",2022-12-19,1274494,1999,high
+F,Ford Motor Company,Consumer Discretionary,Automobile Manufacturers,"Dearborn, Michigan",1957-03-04,37996,1903,high
+FTV,Fortive,Industrials,Industrial Machinery & Supplies & Components,"Everett, Washington",2016-07-01,1659166,2016,high
+FCX,Freeport-McMoRan,Materials,Copper,"Phoenix, Arizona",2011-07-01,831259,1912,high
+GE,GE Aerospace,Industrials,Aerospace & Defense,"Evendale, Ohio",1957-03-04,40545,1892,high
+GEV,GE Vernova,Industrials,Heavy Electrical Equipment,"Cambridge, Massachusetts",2024-04-02,1996810,2024,high
+GNRC,Generac,Industrials,Electrical Components & Equipment,"Waukesha, Wisconsin",2021-03-22,1474735,1959,high
+GD,General Dynamics,Industrials,Aerospace & Defense,"Reston, Virginia",1957-03-04,40533,1899,high
+GM,General Motors,Consumer Discretionary,Automobile Manufacturers,"Detroit, Michigan",2013-06-06,1467858,1908,high
+HPE,Hewlett Packard Enterprise,Information Technology,"Technology Hardware, Storage & Peripherals","Houston, Texas",2015-11-02,1645590,2015,high
+HWM,Howmet Aerospace,Industrials,Aerospace & Defense,"Pittsburgh, Pennsylvania",2016-10-21,4281,1888,high
+HPQ,HP Inc.,Information Technology,"Technology Hardware, Storage & Peripherals","Palo Alto, California",1974-12-31,47217,1939 (2015),high
+HUBB,Hubbell Incorporated,Industrials,Industrial Machinery & Supplies & Components,"Shelton, Connecticut",2023-10-18,48898,1888,high
+HII,Huntington Ingalls Industries,Industrials,Aerospace & Defense,"Newport News, Virginia",2018-01-03,1501585,2011,high
+IEX,IDEX Corporation,Industrials,Industrial Machinery & Supplies & Components,"Northbrook, Illinois",2019-08-09,832101,1988,high
+ITW,Illinois Tool Works,Industrials,Industrial Machinery & Supplies & Components,"Glenview, Illinois",1986-02-28,49826,1912,high
+IR,Ingersoll Rand,Industrials,Industrial Machinery & Supplies & Components,"Davidson, North Carolina",2020-03-03,1699150,1859,high
+INTC,Intel,Information Technology,Semiconductors,"Santa Clara, California",1976-12-31,50863,1968,high
+IFF,International Flavors & Fragrances,Materials,Specialty Chemicals,"New York City, New York",1976-03-31,51253,1958 (1889),high
+JBL,Jabil,Information Technology,Electronic Manufacturing Services,"St. Petersburg, Florida",2023-12-18,898293,1966,high
+KEYS,Keysight Technologies,Information Technology,Electronic Equipment & Instruments,"Santa Rosa, California",2018-11-06,1601046,2014 (1939),high
+KLAC,KLA Corporation,Information Technology,Semiconductor Materials & Equipment,"Milpitas, California",1997-09-30,319201,1975/1977 (1997),high
+LHX,L3Harris,Industrials,Aerospace & Defense,"Melbourne, Florida",2008-09-22,202058,"2019 (L3 1997, Harris 1895)",high
+LRCX,Lam Research,Information Technology,Semiconductor Materials & Equipment,"Fremont, California",2012-06-29,707549,1980,high
+LMT,Lockheed Martin,Industrials,Aerospace & Defense,"Bethesda, Maryland",1957-03-04,936468,1995,high
+LYB,LyondellBasell,Materials,Specialty Chemicals,"Rotterdam, Netherlands",2012-09-05,1489393,2007,high
+MCHP,Microchip Technology,Information Technology,Semiconductors,"Chandler, Arizona",2007-09-07,827054,1989,high
+MU,Micron Technology,Information Technology,Semiconductors,"Boise, Idaho",1994-09-27,723125,1978,high
+MPWR,Monolithic Power Systems,Information Technology,Semiconductors,"Kirkland, Washington",2021-02-12,1280452,1997,high
+NTAP,NetApp,Information Technology,"Technology Hardware, Storage & Peripherals","San Jose, California",1999-06-25,1002047,1992,high
+NDSN,Nordson Corporation,Industrials,Industrial Machinery & Supplies & Components,"Westlake, Ohio",2022-02-15,72331,1935,high
+NOC,Northrop Grumman,Industrials,Aerospace & Defense,"West Falls Church, Virginia[3]",1957-03-04,1133421,"1994 (Northrop 1939, Grumman 1930)",high
+NUE,Nucor,Materials,Steel,"Charlotte, North Carolina",1985-04-30,73309,1940,high
+NVDA,Nvidia,Information Technology,Semiconductors,"Santa Clara, California",2001-11-30,1045810,1993,high
+NXPI,NXP Semiconductors,Information Technology,Semiconductors,"Eindhoven, Netherlands",2021-03-22,1413447,1953,high
+ON,ON Semiconductor,Information Technology,Semiconductors,"Phoenix, Arizona",2022-06-21,1097864,1999,high
+OTIS,Otis Worldwide,Industrials,Industrial Machinery & Supplies & Components,"Farmington, Connecticut",2020-04-03,1781335,"2020 (1853, United Technologies spinoff)",high
+PCAR,Paccar,Industrials,Construction Machinery & Heavy Transportation Equipment,"Bellevue, Washington",1980-12-31,75362,1905,high
+PH,Parker Hannifin,Industrials,Industrial Machinery & Supplies & Components,"Cleveland, Ohio",1985-11-30,76334,1917,high
+PNR,Pentair,Industrials,Industrial Machinery & Supplies & Components,"Worsley, United Kingdom",2012-10-01,77360,1966,high
+PPG,PPG Industries,Materials,Specialty Chemicals,"Pittsburgh, Pennsylvania",1957-03-04,79879,1883,high
+QCOM,Qualcomm,Information Technology,Semiconductors,"San Diego, California",1999-07-22,804328,1985,high
+Q,Qnity Electronics,Information Technology,Semiconductor Materials & Equipment,"Wilmington, Delaware",2025-11-03,2058873,2025,high
+RTX,RTX Corporation,Industrials,Aerospace & Defense,"Waltham, Massachusetts",1957-03-04,101829,1922,high
+ROK,Rockwell Automation,Industrials,Electrical Components & Equipment,"Milwaukee, Wisconsin",2000-03-12,1024478,1903,high
+ROP,Roper Technologies,Information Technology,Electronic Equipment & Instruments,"Sarasota, Florida",2009-12-23,882835,1981,high
+SNDK,Sandisk,Information Technology,"Technology Hardware, Storage & Peripherals","Milpitas, California",2025-11-28,2023554,1988,high
+STX,Seagate Technology,Information Technology,"Technology Hardware, Storage & Peripherals","Dublin, Ireland",2012-07-02,1137789,1979,high
+SHW,Sherwin-Williams,Materials,Specialty Chemicals,"Cleveland, Ohio",1964-06-30,89800,1866,high
+SWKS,Skyworks Solutions,Information Technology,Semiconductors,"Irvine, California",2015-03-12,4127,2002,high
+SNA,Snap-on,Industrials,Industrial Machinery & Supplies & Components,"Kenosha, Wisconsin",1982-09-30,91440,1920,high
+SWK,Stanley Black & Decker,Industrials,Industrial Machinery & Supplies & Components,"New Britain, Connecticut",1982-09-30,93556,1843,high
+STLD,Steel Dynamics,Materials,Steel,"Fort Wayne, Indiana",2022-12-22,1022671,1993,high
+SMCI,Supermicro,Information Technology,"Technology Hardware, Storage & Peripherals","San Jose, California",2024-03-18,1375365,1993,high
+TEL,TE Connectivity,Information Technology,Electronic Manufacturing Services,"Galway, Ireland",2011-10-17,1385157,2007,high
+TDY,Teledyne Technologies,Information Technology,Electronic Equipment & Instruments,"Thousand Oaks, California",2020-06-22,1094285,1960,high
+TER,Teradyne,Information Technology,Semiconductor Materials & Equipment,"North Reading, Massachusetts",2020-09-21,97210,1960,high
+TSLA,"Tesla, Inc.",Consumer Discretionary,Automobile Manufacturers,"Austin, Texas",2020-12-21,1318605,2003,high
+TXN,Texas Instruments,Information Technology,Semiconductors,"Dallas, Texas",2001-03-12,97476,1930,high
+TXT,Textron,Industrials,Aerospace & Defense,"Providence, Rhode Island",1978-12-31,217346,1923,high
+TDG,TransDigm Group,Industrials,Aerospace & Defense,"Cleveland, Ohio",2016-06-03,1260221,1993,high
+TRMB,Trimble Inc.,Information Technology,Electronic Equipment & Instruments,"Westminster, Colorado",2021-01-21,864749,1978,high
+VRT,Vertiv,Industrials,Electrical Components & Equipment,"Westerville, Ohio",2026-03-23,1674101,2016,high
+GWW,W. W. Grainger,Industrials,Industrial Machinery & Supplies & Components,"Lake Forest, Illinois",1981-06-30,277135,1927,high
+WAB,Wabtec,Industrials,Construction Machinery & Heavy Transportation Equipment,"Pittsburgh, Pennsylvania",2019-02-27,943452,1999 (1869),high
+WDC,Western Digital,Information Technology,"Technology Hardware, Storage & Peripherals","San Jose, California",2009-07-01,106040,1970,high
+XYL,Xylem Inc.,Industrials,Industrial Machinery & Supplies & Components,"White Plains, New York",2011-11-01,1524472,2011,high
+ZBRA,Zebra Technologies,Information Technology,Electronic Equipment & Instruments,"Lincolnshire, Illinois",2019-12-23,877212,1969,high
+ABT,Abbott Laboratories,Health Care,Health Care Equipment,"North Chicago, Illinois",1957-03-04,1800,1888,medium
+A,Agilent Technologies,Health Care,Life Sciences Tools & Services,"Santa Clara, California",2000-06-05,1090872,1999,medium
+ALGN,Align Technology,Health Care,Health Care Supplies,"Tempe, Arizona",2017-06-19,1097149,1997,medium
+ANET,Arista Networks,Information Technology,Communications Equipment,"Santa Clara, California",2018-08-28,1596532,2004,medium
+BAX,Baxter International,Health Care,Health Care Equipment,"Deerfield, Illinois",1972-09-30,10456,1931,medium
+BDX,Becton Dickinson,Health Care,Health Care Equipment,"Franklin Lakes, New Jersey",1972-09-30,10795,1897,medium
+TECH,Bio-Techne,Health Care,Life Sciences Tools & Services,"Minneapolis, Minnesota",2021-08-30,842023,1976,medium
+BSX,Boston Scientific,Health Care,Health Care Equipment,"Marlborough, Massachusetts",1995-02-24,885725,1979,medium
+BR,Broadridge Financial Solutions,Industrials,Data Processing & Outsourced Services,"Lake Success, New York",2018-06-18,1383312,1962,medium
+CRL,Charles River Laboratories,Health Care,Life Sciences Tools & Services,"Wilmington, Massachusetts",2021-05-14,1100682,1947,medium
+CIEN,Ciena,Information Technology,Communications Equipment,"Hanover, Maryland",2026-02-09,936395,1992,medium
+CSCO,Cisco,Information Technology,Communications Equipment,"San Jose, California",1993-12-01,858877,1984,medium
+COO,Cooper Companies (The),Health Care,Health Care Supplies,"San Ramon, California",2016-09-23,711404,1958,medium
+DHR,Danaher Corporation,Health Care,Life Sciences Tools & Services,"Washington, D.C.",1998-11-18,313616,1969,medium
+DXCM,Dexcom,Health Care,Health Care Equipment,"San Diego, California",2020-05-12,1093557,1999,medium
+EW,Edwards Lifesciences,Health Care,Health Care Equipment,"Irvine, California",2011-04-01,1099800,1958,medium
+FFIV,"F5, Inc.",Information Technology,Communications Equipment,"Seattle, Washington",2010-12-20,1048695,1996,medium
+GEHC,GE HealthCare,Health Care,Health Care Equipment,"Chicago, Illinois",2023-01-04,1932393,1994,medium
+HOLX,Hologic,Health Care,Health Care Equipment,"Marlborough, Massachusetts",2016-03-30,859737,1985,medium
+IDXX,Idexx Laboratories,Health Care,Health Care Equipment,"Westbrook, Maine",2017-01-05,874716,1983,medium
+PODD,Insulet Corporation,Health Care,Health Care Equipment,"Acton, Massachusetts",2023-03-15,1145197,2000,medium
+ISRG,Intuitive Surgical,Health Care,Health Care Equipment,"Sunnyvale, California",2008-06-02,1035267,1995,medium
+IQV,IQVIA,Health Care,Life Sciences Tools & Services,"Durham, North Carolina",2017-08-29,1478242,1982,medium
+LITE,Lumentum,Information Technology,Communications Equipment,"San Jose, California",2026-03-23,1633978,2015,medium
+MDT,Medtronic,Health Care,Health Care Equipment,"Galway, Ireland",1986-10-31,1613103,1949,medium
+MTD,Mettler Toledo,Health Care,Life Sciences Tools & Services,"Columbus, Ohio",2016-09-06,1037646,1945,medium
+MSI,Motorola Solutions,Information Technology,Communications Equipment,"Chicago, Illinois",1957-03-04,68505,1928 (2011),medium
+RMD,ResMed,Health Care,Health Care Equipment,"San Diego, California",2017-07-26,943819,1989,medium
+RVTY,Revvity,Health Care,Health Care Equipment,"Waltham, Massachusetts",1985-05-31,31791,1937,medium
+STE,Steris,Health Care,Health Care Equipment,"Dublin, Ireland",2019-12-23,1757898,1985,medium
+SYK,Stryker Corporation,Health Care,Health Care Equipment,"Kalamazoo, Michigan",2000-12-12,310764,1941,medium
+TMO,Thermo Fisher Scientific,Health Care,Life Sciences Tools & Services,"Waltham, Massachusetts",2004-08-03,97745,2006 (1902),medium
+WAT,Waters Corporation,Health Care,Life Sciences Tools & Services,"Milford, Massachusetts",2002-01-02,1000697,1958,medium
+WST,West Pharmaceutical Services,Health Care,Health Care Supplies,"Exton, Pennsylvania",2020-05-22,105770,1923,medium
+ZBH,Zimmer Biomet,Health Care,Health Care Equipment,"Warsaw, Indiana",2001-08-07,1136869,1927,medium
+ACN,Accenture,Information Technology,IT Consulting & Other Services,"Dublin, Ireland",2011-07-06,1467373,1989,control
+ADBE,Adobe Inc.,Information Technology,Application Software,"San Jose, California",1997-05-05,796343,1982,control
+AFL,Aflac,Financials,Life & Health Insurance,"Columbus, Georgia",1999-05-28,4977,1955,control
+ABNB,Airbnb,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","San Francisco, California",2023-09-18,1559720,2008,control
+ALL,Allstate,Financials,Property & Casualty Insurance,"Northbrook, Illinois",1995-07-13,899051,1931,control
+GOOGL,Alphabet Inc. (Class A),Communication Services,Interactive Media & Services,"Mountain View, California",2006-04-03,1652044,1998,control
+GOOG,Alphabet Inc. (Class C),Communication Services,Interactive Media & Services,"Mountain View, California",2014-04-03,1652044,1998,control
+MO,Altria,Consumer Staples,Tobacco,"Richmond, Virginia",1957-03-04,764180,1985,control
+AMZN,Amazon,Consumer Discretionary,Broadline Retail,"Seattle, Washington",2005-11-18,1018724,1994,control
+AXP,American Express,Financials,Consumer Finance,"New York City, New York",1976-06-30,4962,1850,control
+AIG,American International Group,Financials,Multi-line Insurance,"New York City, New York",1980-03-31,5272,1919,control
+APP,AppLovin,Information Technology,Application Software,"Palo Alto, California",2025-09-22,1751008,2012,control
+ACGL,Arch Capital Group,Financials,Property & Casualty Insurance,"Hamilton, Bermuda",2022-11-01,947484,1995,control
+AIZ,Assurant,Financials,Multi-line Insurance,"Atlanta, Georgia",2007-04-10,1267238,1892,control
+ADSK,Autodesk,Information Technology,Application Software,"San Francisco, California",1989-12-01,769397,1982,control
+BAC,Bank of America,Financials,Diversified Banks,"Charlotte, North Carolina",1976-06-30,70858,1998 (1923 / 1874),control
+BKNG,Booking Holdings,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Norwalk, Connecticut",2009-11-06,1075531,1996,control
+BF.B,Brown–Forman,Consumer Staples,Distillers & Vintners,"Louisville, Kentucky",1982-10-31,14693,1870,control
+CDNS,Cadence Design Systems,Information Technology,Application Software,"San Jose, California",2017-09-18,813672,1988,control
+COF,Capital One,Financials,Consumer Finance,"Tysons Corner, Virginia",1998-07-01,927628,1994,control
+CCL,Carnival,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Miami, Florida",1998-12-22,815097,1972,control
+SCHW,Charles Schwab Corporation,Financials,Investment Banking & Brokerage,"Westlake, Texas",1997-06-02,316709,1971,control
+CMG,Chipotle Mexican Grill,Consumer Discretionary,Restaurants,"Newport Beach, California",2011-04-28,1058090,1993,control
+CB,Chubb Limited,Financials,Property & Casualty Insurance,"Zurich, Switzerland",2010-07-15,896159,1985,control
+CINF,Cincinnati Financial,Financials,Property & Casualty Insurance,"Fairfield, Ohio",1997-12-18,20286,1950,control
+C,Citigroup,Financials,Diversified Banks,"New York City, New York",1988-05-31,831001,1998,control
+CFG,Citizens Financial Group,Financials,Regional Banks,"Providence, Rhode Island",2016-01-29,759944,1828,control
+CTSH,Cognizant,Information Technology,IT Consulting & Other Services,"Teaneck, New Jersey",2006-11-17,1058290,1994,control
+STZ,Constellation Brands,Consumer Staples,Distillers & Vintners,"Rochester, New York",2005-07-01,16918,1945,control
+DRI,Darden Restaurants,Consumer Discretionary,Restaurants,"Orlando, Florida",1995-05-31,940944,1938,control
+DDOG,Datadog,Information Technology,Application Software,"New York City, New York",2025-07-09,1561550,2010,control
+DPZ,Domino's,Consumer Discretionary,Restaurants,"Ann Arbor, Michigan",2020-05-12,1286681,1960,control
+EBAY,eBay Inc.,Consumer Discretionary,Broadline Retail,"San Jose, California",2002-07-22,1065088,1995,control
+EPAM,EPAM Systems,Information Technology,IT Consulting & Other Services,"Newtown, Pennsylvania",2021-12-14,1352010,1993,control
+EXPE,Expedia Group,Consumer Discretionary,"Hotels, Resorts & Cruise Lines","Seattle, Washington",2007-10-02,1324424,1996,control
+FICO,Fair Isaac,Information Technology,Application Software,"Bozeman, Montana",2023-03-20,814547,1956,control
+FITB,Fifth Third Bancorp,Financials,Regional Banks,"Cincinnati, Ohio",1996-03-29,35527,1858,control
+IT,Gartner,Information Technology,IT Consulting & Other Services,"Stamford, Connecticut",2017-04-05,749251,1979,control
+GL,Globe Life,Financials,Life & Health Insurance,"McKinney, Texas",1989-04-30,320335,1900,control
+GS,Goldman Sachs,Financials,Investment Banking & Brokerage,"New York City, New York",2002-07-22,886982,1869,control
