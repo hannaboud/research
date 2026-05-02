@@ -33,7 +33,7 @@ MACRO_FACTORS = {
 }
 TICKERS = ld.get_data(
     universe=['0#.SPX'],
-    fields=['TR.RIC']
+    fields=['TR.RIC']›
 )['Instrument'].tolist() + ["IVV"]
 daily_data = refresh_and_load_daily_data(TICKERS)
 
