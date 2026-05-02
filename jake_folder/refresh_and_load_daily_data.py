@@ -6,24 +6,16 @@ import time
 import os
 import pandas as pd
 
+# Creates daily_data.csv if it doesn't exist
 
-def refresh_and_load_daily_historical_data(
+def refresh_and_load_daily_data(
         universe,
         daily_data_filename = "daily_data.csv",
-        batch_size = 100,
+        batch_size = 5,
         START_DATE = "2016-01-01",
-        END_DATE = date.today()
+        END_DATE = date.today(),
+        pkg_root = "jake_folder"
 ):
-    ld.open_session()
-    universe = ld.get_data(
-        universe=['0#.SPX'],
-        fields=['TR.RIC']
-    )['Instrument'].tolist() + ["IVV"]
-    daily_data_filename = "daily_data.csv"
-    batch_size = 100
-    START_DATE = "2016-01-01"
-    END_DATE = date.today()
-
     universe.sort()
 
     if os.path.exists(daily_data_filename):
@@ -33,12 +25,10 @@ def refresh_and_load_daily_historical_data(
     else:
         data_list = []
 
+
         for i in range(0, len(universe), batch_size):
             batch = universe[i:i + batch_size]
-            print(
-                f"  Fetching batch {i // batch_size + 1} / {
-                len(universe) // batch_size + 1} ({len(batch)} tickers)"
-            )
+            print("  Fetching data for: " + ", ".join(batch))
 
             try:
                 df = ld.get_history(
@@ -50,15 +40,15 @@ def refresh_and_load_daily_historical_data(
                 )
                 data_list.append(df)
                 # Small pause to be nice to the API
-                time.sleep(0.8)
+                time.sleep(1)
             except Exception as e:
                 print(f"    Error on batch: {e}")
                 time.sleep(2)
 
         daily_data = pd.concat(data_list, axis=1)
+        daily_data.to_csv(os.path.join(pkg_root, daily_data_filename + '.csv'))
 
-
-    summarize_missing_dates(daily_data)
+        summarize_missing_dates(daily_data)
 
     daily_data.to_csv("daily_data.csv", index=False)
     return daily_data
