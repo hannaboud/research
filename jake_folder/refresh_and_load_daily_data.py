@@ -18,18 +18,17 @@ def refresh_and_load_daily_data(
 ):
     universe.sort()
 
-    if os.path.exists(daily_data_filename):
-        daily_data = pd.read_csv(daily_data_filename)
+    daily_data_path = os.path.join(pkg_root, daily_data_filename)
+
+    if os.path.exists(daily_data_path):
+        daily_data = pd.read_csv(daily_data_path)
         print(f"✅ loaded '{daily_data_filename}'")
 
     else:
         data_list = []
-
-
         for i in range(0, len(universe), batch_size):
             batch = universe[i:i + batch_size]
             print("  Fetching data for: " + ", ".join(batch))
-
             try:
                 df = ld.get_history(
                     universe=batch,
@@ -46,9 +45,8 @@ def refresh_and_load_daily_data(
                 time.sleep(2)
 
         daily_data = pd.concat(data_list, axis=1)
-        daily_data.to_csv(os.path.join(pkg_root, daily_data_filename + '.csv'))
+        daily_data.to_csv(daily_data_path)
 
-        summarize_missing_dates(daily_data)
+    summarize_missing_dates(daily_data)
 
-    daily_data.to_csv("daily_data.csv", index=False)
     return daily_data
