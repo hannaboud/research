@@ -1,7 +1,7 @@
 import lseg.data as ld
 from datetime import datetime
 import time
-import textwrap
+import numpy as np
 
 def get_trading_days(start_date: str, end_date: str, calendar: str = "USA"):
     """
@@ -15,6 +15,9 @@ def get_trading_days(start_date: str, end_date: str, calendar: str = "USA"):
         end_date=end_date,
         frequency="daily",
         calendars=["USA"]
+    )
+    response.remove(
+        np.datetime64("2016-03-25") # Good Friday 2016
     )
     ld.close_session()
     return response
@@ -46,7 +49,14 @@ def refinitiv_batch_fetch(
             print("✔")
             # Small pause to be nice to the API
             time.sleep(sleep_time)
+        except ReadTimeout:
+            print("X   Read Timeout")
+            print("Waiting 2 seconds...")
+            time.sleep(2)
+            print("Retrying...")
+            i=i-1
         except Exception as e:
+            print("X")
             print(f"    Error on batch: {e}")
             time.sleep(2)
     ld.close_session()

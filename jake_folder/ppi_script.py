@@ -19,7 +19,6 @@ MIN_OBSERVATIONS = 20
 
 RE_PPI_RIC = "aCNCNHVGWM"
 START_DATE = "2016-01-01"
-END_DATE = "2017-01-01"
 
 CHARTS_DIR = Path("charts/ppi")
 CHARTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -35,8 +34,7 @@ MACRO_FACTORS = {
 
 daily_data = refresh_and_load_daily_sp500_data(
     additional_RICs = ["IVV"],
-    START_DATE=START_DATE,
-    END_DATE=END_DATE
+    START_DATE=START_DATE
 )
 
 #
