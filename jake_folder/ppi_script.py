@@ -7,8 +7,10 @@ import warnings
 import lseg.data as ld
 import time
 import os
+from jake_folder.refresh_and_load_daily_sp500_data import *
+
 from pathlib import Path
-from jake_folder.refresh_and_load_daily_data import refresh_and_load_daily_data
+
 
 # ========================= CONFIG =========================
 
@@ -17,13 +19,12 @@ MIN_OBSERVATIONS = 20
 
 RE_PPI_RIC = "aCNCNHVGWM"
 START_DATE = "2016-01-01"
-END_DATE = "2026-04-01"
+END_DATE = "2017-01-01"
 
 CHARTS_DIR = Path("charts/ppi")
 CHARTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # =======================  DATA =======================
-ld.open_session()
 MACRO_FACTORS = {
     "VIX_PROXY": "VXX",
     "US10Y": "US10YT=RR",
@@ -31,18 +32,13 @@ MACRO_FACTORS = {
     "WTI": "CLc1",
     "COPPER": "HGc1"
 }
-TICKERS = ld.get_data(
-    universe=['0#.SPX'],
-    fields=['TR.RIC']›
-)['Instrument'].tolist() + ["IVV"]
-daily_data = refresh_and_load_daily_data(TICKERS)
 
+daily_data = refresh_and_load_daily_sp500_data(
+    additional_RICs = ["IVV"],
+    START_DATE=START_DATE,
+    END_DATE=END_DATE
+)
 
-# print("LSEG session opened.\n")
-#
-# print("=" * 90)
-# print("China RE PPI — Full S&P 500 Multi-Factor Analysis")
-# print("=" * 90)
 #
 # # PPI
 # ppi_raw = ld.get_history([RE_PPI_RIC], fields=None, interval="monthly",

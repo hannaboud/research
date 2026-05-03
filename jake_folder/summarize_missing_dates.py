@@ -106,11 +106,12 @@ def get_current_market_caps(ric_list: list) -> pd.Series:
         return pd.Series()
 
     try:
+        ld.open_session()
         df = ld.get_data(
             universe=ric_list,
             fields=['TR.CompanyMarketCap']
         )
-
+        ld.close_session()
         if df.empty:
             print("⚠️ Market cap query returned empty.")
             return pd.Series()
